@@ -1,0 +1,105 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  font-family: Arial, sans-serif;
+  background: #F4E1A1; /* cream background */
+  overflow-x: hidden;   /* 🚀 prevents sideways scroll */
+}
+
+.hero {
+  flex: 1;
+  display: flex;
+  min-height: auto;
+  width: 100%;          /* keep hero inside viewport */
+  box-sizing: border-box;
+}
+
+/* Left panel */
+.left {
+  flex: 1;
+  background: #465C68; /* slate blue */
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 4rem;
+}
+
+.logo {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  color: #F4E1A1; /* cream accent */
+}
+
+.left h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: #F4E1A1; /* cream title */
+}
+
+.left p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  color: #D4B4A3; /* beige subtitle */
+}
+
+.btn-primary {
+  background: #B17073; /* mauve button */
+  color: white;
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-primary:hover {
+  background: #4A2D33; /* maroon hover */
+}
+
+.btn-link {
+  margin-left: 1rem;
+  color: #F4E1A1; /* cream link */
+  cursor: pointer;
+}
+
+.right {
+  flex: 1;
+  background-image: url("../images/bg.webp");
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.browse {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #D4B4A3; /* beige */
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  color: #4A2D33; /* maroon text */
+}
+
+.browse:hover {
+  background: #B17073; /* mauve hover */
+  color: white;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 1.5rem;
+  font-size: 1rem;
+  background: #D4B4A3; /* beige */
+  color: #4A2D33;      /* maroon text */
+  width: 100%;
+}
+
+

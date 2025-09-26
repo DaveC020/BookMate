@@ -1,0 +1,103 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #F4E1A1; /* cream */
+  color: #333;
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #465C68; /* slate blue */
+  color: white;
+  padding: 1rem 2rem;
+}
+
+.logo {
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+}
+
+.search-bar input {
+  padding: 0.5rem;
+  border-radius: 5px 0 0 5px;
+  border: none;
+  outline: none;
+}
+
+.search-bar button {
+  padding: 0.5rem 1rem;
+  background: #B17073; /* mauve */
+  border: none;
+  color: white;
+  border-radius: 0 5px 5px 0;
+  cursor: pointer;
+}
+
+.search-bar button:hover {
+  background: #4A2D33; /* maroon */
+}
+
+.navbar nav a {
+  margin-left: 1.5rem;
+  text-decoration: none;
+  color: #F4E1A1; /* cream */
+  font-weight: bold;
+}
+
+.navbar nav a:hover {
+  color: #D4B4A3; /* beige */
+}
+
+/* Sections */
+.welcome {
+  padding: 2rem;
+  background: #D4B4A3; /* beige */
+  text-align: center;
+}
+
+h3 {
+  margin: 1.5rem 0 1rem;
+  padding-left: 2rem;
+  color: #465C68;
+}
+
+/* Books grid */
+.book-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+  padding: 0 2rem 2rem;
+}
+
+.book-card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  padding: 1rem;
+  text-align: center;
+}
+
+.book-cover {
+  background: #B17073; /* mauve placeholder */
+  height: 200px;
+  border-radius: 5px;
+  margin-bottom: 1rem;
+}
+
+.book-title {
+  font-weight: bold;
+  color: #4A2D33;
+}
+
+.book-author, .book-genre {
+  font-size: 0.9rem;
+  color: #555;
+}
