@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - BookMate</title>
+  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+</head>
+<body>
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="logo">BookMate</div>
+    <div class="search-bar">
+      <input type="text" placeholder="Search books...">
+      <button>🔍</button>
+    </div>
+    <nav>
+      <a href="#">Community</a>
+      <a href="#">Profile</a>
+    </nav>
+  </header>
+
+  <!-- Welcome Section -->
+  <section class="welcome">
+    <h2>Welcome back, {{ user.username }}!</h2>
+  </section>
+
+  <!-- Currently Reading (only show if user has books) -->
+  <section class="currently-reading">
+    <h3>Currently Reading</h3>
+    <div class="book-grid">
+      <!-- Example book card -->
+      <div class="book-card">
+        <div class="book-cover"></div>
+        <p class="book-title">Book Title</p>
+        <p class="book-author">Author</p>
+        <p class="book-genre">Genre</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recommendations -->
+  <section class="recommendations">
+    <h3>Recommendations</h3>
+    <div class="book-grid">
+      <div class="book-card">
+        <div class="book-cover"></div>
+        <p class="book-title">Book Title</p>
+        <p class="book-author">Author</p>
+        <p class="book-genre">Genre</p>
+      </div>
+      <div class="book-card">
+        <div class="book-cover"></div>
+        <p class="book-title">Another Title</p>
+        <p class="book-author">Author</p>
+        <p class="book-genre">Genre</p>
+      </div>
+    </div>
+  </section>
+
+  <script src="{% static 'js/dashboard.js' %}"></script>
+</body>
+</html>
+    

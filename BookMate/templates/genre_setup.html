@@ -1,0 +1,59 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Choose Your Favorite Genres - BookMate</title>
+  <link rel="stylesheet" href="{% static 'css/genre_setup.css' %}">
+</head>
+<body>
+  <div class="genre-container">
+    <h1>What's on your mind?</h1>
+    <p>Select genres:</p>
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="genres">
+        <!-- Fiction -->
+        <label class="genre-option"><input type="checkbox" name="genres" value="Fantasy"> Fantasy</label>
+        <label class="genre-option"><input type="checkbox" name="genres" value="Science Fiction"> Science Fiction</label>
+        <label class="genre-option"><input type="checkbox" name="genres" value="Mystery"> Mystery</label>
+        <label class="genre-option"><input type="checkbox" name="genres" value="Romance"> Romance</label>
+        <label class="genre-option"><input type="checkbox" name="genres" value="Horror"> Horror</label>
+        <label class="genre-option"><input type="checkbox" name="genres" value="Historical Fiction"> Historical Fiction</label>
+        <label class="genre-option"><input type="checkbox" name="genres" value="Thriller"> Thriller</label>
+        <label class="genre-option"><input type="checkbox" name="genres" value="Adventure"> Adventure</label>
+
+        <!-- Non-Fiction -->
+        <label class="genre-option"><input type="checkbox" name="genres" value="Non-Fiction"> Non-Fiction</label>
+        <label class="genre-option"><input type="checkbox" name="genres" value="Biography"> Biography</label>
+        <label class="genre-option"><input type="checkbox" name="genres" value="Self-Help"> Self-Help</label>
+        <label class="genre-option"><input type="checkbox" name="genres" value="Health & Wellness"> Health & Wellness</label>
+        <label class="genre-option"><input type="checkbox" name="genres" value="Travel"> Travel</label>
+        <label class="genre-option"><input type="checkbox" name="genres" value="Cooking"> Cooking</label>
+        <label class="genre-option"><input type="checkbox" name="genres" value="Business"> Business</label>
+
+        <!-- Education -->
+        <label class="genre-option"><input type="checkbox" name="genres" value="Education"> Education</label>
+        <label class="genre-option"><input type="checkbox" name="genres" value="Science"> Science</label>
+        <label class="genre-option"><input type="checkbox" name="genres" value="Technology"> Technology</label>
+        <label class="genre-option"><input type="checkbox" name="genres" value="Mathematics"> Mathematics</label>
+        <label class="genre-option"><input type="checkbox" name="genres" value="History"> History</label>
+        <label class="genre-option"><input type="checkbox" name="genres" value="Philosophy"> Philosophy</label>
+        <label class="genre-option"><input type="checkbox" name="genres" value="Politics"> Politics</label>
+        <label class="genre-option"><input type="checkbox" name="genres" value="Religion & Spirituality"> Religion & Spirituality</label>
+
+        <!-- Kids/Teens -->
+        <label class="genre-option"><input type="checkbox" name="genres" value="Children's Books"> Children's Books</label>
+        <label class="genre-option"><input type="checkbox" name="genres" value="Young Adult"> Young Adult</label>
+        <label class="genre-option"><input type="checkbox" name="genres" value="Comics & Graphic Novels"> Comics & Graphic Novels</label>
+      </div>
+
+      <button type="submit" class="btn-primary">Continue</button>
+    </form>
+  </div>
+
+  <script src="{% static 'js/genre_setup.js' %}"></script>
+</body>
+</html>

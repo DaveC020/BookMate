@@ -1,0 +1,37 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BookMate</title>
+  <link rel="stylesheet" href="{% static 'css/landing.css' %}?v=3">
+</head>
+<body>
+  <div class="hero">
+    <!-- Left Section -->
+    <div class="left">
+      <div class="logo">▮▮</div>
+      <h1><span class="brand">BookMate</span></h1>
+      <p>Discover books that match your mood.</p>
+      <div>
+        <a href="{% url 'register' %}" class="btn-primary">Sign up</a>
+        <a href="{% url 'login' %}" class="btn-link">Login</a>
+      </div>
+    </div>
+
+    <!-- Right Section -->
+    <div class="right">
+      <div class="overlay"></div>
+      <button class="browse">Browse Books</button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    Welcome to BookMate — your personal reading companion. Track your books, explore new titles, and make every page count.
+  </div>
+
+  <script src="{% static 'js/landing.js' %}"></script>
+</body>
+</html>

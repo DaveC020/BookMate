@@ -1,0 +1,77 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #F4E1A1; /* cream */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.form-container {
+  background: #D4B4A3; /* beige */
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  width: 100%;
+  max-width: 400px;
+  text-align: center; /* Center text inside */
+}
+
+h1 {
+  text-align: center;
+  color: #465C68; /* slate blue */
+  margin-bottom: 1.5rem;
+}
+
+.input-group {
+  margin-bottom: 1rem;
+  text-align: left; /* Keep labels aligned left */
+}
+
+.input-group label {
+  display: block;
+  font-weight: bold;
+  color: #4A2D33; /* maroon */
+  margin-bottom: 0.3rem;
+}
+
+.input-group input {
+  width: 100%;            /* make sure inputs stretch full width */
+  padding: 0.7rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  box-sizing: border-box;  /* prevents shrinking */
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 0.8rem;
+  background: #465C68; /* slate blue */
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: 0.3s;
+}
+
+.btn-primary:hover {
+  background: #4A2D33; /* maroon */
+}
+
+p {
+  text-align: center;
+  margin-top: 1rem;
+  color: #B17073; /* mauve */
+}
+
+p a {
+  color: #465C68;
+  text-decoration: none;
+}
+
+p a:hover {
+  color: #4A2D33;
+}

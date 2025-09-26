@@ -1,0 +1,115 @@
+/* Fullscreen background with bookshelf image */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative; /* so overlay works properly */
+  overflow: hidden;
+}
+
+/* Background image with blur */
+body::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url("../images/bg.webp") no-repeat center center/cover;
+  filter: blur(8px);      /* 👈 adjust blur strength */
+  transform: scale(1.05); /* avoid edge artifacts */
+  z-index: -1;            /* keep it behind the content */
+}
+
+/* Keep form content visible */
+.form-container {
+  position: relative;
+  background: rgba(255, 255, 255, 0.9); /* semi-transparent white for clarity */
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+
+/* Overlay for readability */
+.auth-container {
+  background: rgba(244, 225, 161, 0.9); /* cream with transparency */
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+/* Headings */
+h1 {
+  margin-bottom: 0.5rem;
+  color: #465C68; /* slate blue */
+}
+
+p {
+  margin-bottom: 1.5rem;
+  color: #4A2D33; /* maroon */
+}
+
+/* Input fields */
+.input-group {
+  text-align: left;
+  margin-bottom: 1rem;
+}
+
+.input-group label {
+  display: block;
+  font-weight: bold;
+  color: #4A2D33;
+  margin-bottom: 0.3rem;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 0.7rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+/* Buttons */
+.btn-primary {
+  width: 100%;
+  padding: 0.8rem;
+  background: #B17073; /* mauve */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: 0.3s;
+}
+
+.btn-primary:hover {
+  background: #4A2D33; /* maroon */
+}
+
+/* Switch links */
+.switch-text {
+  margin-top: 1rem;
+  color: #465C68;
+}
+
+.switch-text a {
+  color: #B17073;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.switch-text a:hover {
+  color: #4A2D33;
+}
