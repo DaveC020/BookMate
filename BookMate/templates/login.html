@@ -13,16 +13,33 @@
       <h1>Welcome Back 📚</h1>
       <p>Login to continue your reading journey</p>
 
+      {% if messages %}
+        <div class="messages">
+          {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+
       <form method="post">
         {% csrf_token %}
         <div class="input-group">
           <label for="username">Username</label>
           <input type="text" id="username" name="username" required>
+          {% if form.username.errors %}
+          <p class="error">{{ form.username.errors.0 }}</p>
+          {% endif %}
         </div>
 
         <div class="input-group">
           <label for="password">Password</label>
           <input type="password" id="password" name="password" required>
+          {% if form.password.errors %}
+          <p class="error">{{ form.password.errors.0 }}</p>
+          {% endif %}
         </div>
 
         <button type="submit" class="btn-primary">Login</button>
