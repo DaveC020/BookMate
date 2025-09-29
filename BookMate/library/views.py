@@ -13,8 +13,8 @@ def register_view(request):
             user.set_password(form.cleaned_data["password1"])
             user.save()
             messages.success(request, "✅ Registration successful! You can now log in.")
-            #return redirect("login")
-            return render(request, "register.html", {"form": form})
+            return redirect("login")
+            
         else:
             print(form.errors)  # 👈 this will show why validation failed
             messages.error(request, "⚠️ Please fix the errors below.")
