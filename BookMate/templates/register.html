@@ -49,18 +49,22 @@
 
         <div class="input-group">
           {{ form.password1.label_tag }}
-          {{ form.password1 }}
+          <div class="pw-wrap">
+            {{ form.password1}}
+          </div>
           <div class="error">{{ form.password1.errors }}</div>
         </div>
 
         <div class="input-group">
           {{ form.password2.label_tag }}
-          {{ form.password2 }}
+          <div class="pw-wrap">
+            {{ form.password2 }}
+          </div>
           <div class="error">{{ form.password2.errors }}</div>
         </div>
-
         <button type="submit" class="btn-primary">Register</button>
       </form>
+      <script src="{% static 'js/pw-toggle.js' %}"></script>
 
       <p class="switch-text">
         Already have an account? <a href="{% url 'login' %}">Login here</a>

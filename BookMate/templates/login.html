@@ -36,15 +36,16 @@
 
         <div class="input-group">
           <label for="password">Password</label>
-          <input type="password" id="password" name="password" required>
+          <div class="pw-wrap">
+            <input type="password" id="password" name="password" required data-toggle="pw">
+          </div>
           {% if form.password.errors %}
           <p class="error">{{ form.password.errors.0 }}</p>
           {% endif %}
         </div>
-
         <button type="submit" class="btn-primary">Login</button>
       </form>
-
+      <script src="{% static 'js/pw-toggle.js' %}"></script>
       <p class="switch-text">
         Don’t have an account? <a href="{% url 'register' %}">Register here</a>
       </p>

@@ -1,8 +1,15 @@
 from django import forms
-from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.models import User
 
 
+# --- small helper widget to mark password fields for the JS toggle ---
+class PWInput(forms.PasswordInput):
+    def __init__(self, *args, **kwargs):
+        attrs = kwargs.pop("attrs", {}) or {}
+        # this attribute is what your JS looks for
+        attrs.setdefault("data-toggle", "pw")
+        super().__init__(attrs=attrs)
 
 
 class RegisterForm(forms.ModelForm):
@@ -11,23 +18,19 @@ class RegisterForm(forms.ModelForm):
         error_messages={
             "required": "⚠️ Please enter your email address.",
             "invalid": "⚠️ Please enter a valid email address.",
-        }
+        },
     )
     password1 = forms.CharField(
-        widget=forms.PasswordInput,
+        widget=PWInput(),                       # <- instance + data-toggle="pw"
         label="Password",
         min_length=8,
         help_text="Password must be at least 8 characters long.",
-        error_messages={
-            "required": "⚠️ Please enter a password.",
-        }
+        error_messages={"required": "⚠️ Please enter a password."},
     )
     password2 = forms.CharField(
-        widget=forms.PasswordInput,
+        widget=PWInput(),                       # <- instance + data-toggle="pw"
         label="Confirm Password",
-        error_messages={
-            "required": "⚠️ Please confirm your password.",
-        }
+        error_messages={"required": "⚠️ Please confirm your password."},
     )
 
     class Meta:
@@ -50,16 +53,15 @@ class RegisterForm(forms.ModelForm):
         cleaned_data = super().clean()
         p1 = cleaned_data.get("password1")
         p2 = cleaned_data.get("password2")
-
         if p1 and p2 and p1 != p2:
             raise forms.ValidationError("⚠️ Passwords do not match.")
-
         return cleaned_data
 
 
-
-# Login Form
 class LoginForm(AuthenticationForm):
+    # make sure the login password also gets the toggle
+    password = forms.CharField(label="Password", strip=False, widget=PWInput())
+
     def clean(self):
         cleaned_data = super().clean()
         if self.errors:
