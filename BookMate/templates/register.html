@@ -38,13 +38,17 @@
         <div class="input-group">
           {{ form.username.label_tag }}
           {{ form.username }}
-        <div class="error">{{ form.username.errors }}</div>
+          {% if form.username.errors %}
+            <div class="error">{{ form.username.errors }}</div>
+          {% endif %}
         </div>
 
         <div class="input-group">
           {{ form.email.label_tag }}
           {{ form.email }}
-          <div class="error">{{ form.email.errors }}</div>
+          {% if form.email.errors %}
+            <div class="error">{{ form.email.errors }}</div>
+          {% endif %}
         </div>
 
         <div class="input-group">
@@ -52,7 +56,9 @@
           <div class="pw-wrap">
             {{ form.password1}}
           </div>
-          <div class="error">{{ form.password1.errors }}</div>
+          {% if form.password1.errors %}
+            <div class="error">{{ form.password1.errors }}</div>
+          {% endif %}
         </div>
 
         <div class="input-group">
@@ -60,7 +66,9 @@
           <div class="pw-wrap">
             {{ form.password2 }}
           </div>
-          <div class="error">{{ form.password2.errors }}</div>
+          {% if form.password2.errors %}
+            <div class="error">{{ form.password2.errors }}</div>
+          {% endif %}
         </div>
         <button type="submit" class="btn-primary">Register</button>
       </form>

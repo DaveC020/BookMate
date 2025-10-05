@@ -140,12 +140,41 @@ p {
 /* optional: message + error styling to match your palette */
 .messages { margin-bottom: 1rem; }
 .alert, .error {
-  color: #4A2D33;
-  background: #F4E1A1;
-  border-left: 4px solid #B17073;
-  padding: .6rem .75rem;
-  border-radius: 6px;
-  margin: .5rem 0;
+  color: #ffffff;
+  background: #dc3545;
+  border-left: 3px solid #8b0000;
+  padding: 0.4rem 0.5rem;
+  border-radius: 4px;
+  margin: 0.3rem 0 0 0;
+  font-size: 0.875rem;
+}
+
+/* Django form error styling */
+.errorlist {
+  list-style: none;
+  padding: 0;
+  margin: 0.3rem 0 0 0;
+}
+
+.errorlist li {
+  color: #ffffff;
+  background: #dc3545;
+  border-left: 3px solid #8b0000;
+  padding: 0.4rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  margin-bottom: 0.2rem;
+}
+
+/* Non-field errors styling */
+.form-errors p {
+  color: #ffffff !important;
+  background: #dc3545;
+  border-left: 3px solid #8b0000;
+  padding: 0.4rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  margin: 0.3rem 0;
 }
 /* --- password toggle inside input --- */
 .pw-wrap { position: relative; }
@@ -181,3 +210,4 @@ p {
   outline: 2px solid #B17073;
   border-radius: 4px;
 }
+
