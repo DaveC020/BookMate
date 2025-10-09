@@ -1,0 +1,67 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'css/book_preview.css' %}?v=1">
+  <title>{{ title }} - BookMate</title>
+</head>
+<body>
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="logo">BookMate</div>
+
+    <!-- 🔍 Search Bar -->
+    <div class="search-bar">
+      <input id="searchInput" type="text" placeholder="Search books...">
+      <button id="searchButton" type="button">🔍</button>
+    </div>
+
+    <nav>
+      <a href="#">Community</a>
+      <a href="#">Profile</a>
+    </nav>
+  </header>
+
+  <div class="main-container">
+    <div class="left-container">
+      <div class="inner-left-container">
+        {% if cover_url %}
+          <img class="main-book" src="{{ cover_url }}" alt="{{ title }}">
+        {% else %}
+          <img class="main-book" src="{% static 'images/no-cover.png' %}" alt="No Cover Available">
+        {% endif %}
+      </div>
+      <button class="add-button" data-olid="{{ olid }}">Add Book</button>
+    </div>
+
+    <div class="right-container">
+      <div class="details-container">
+        <h2>{{ title }}</h2>
+        {% if authors %}
+          <h3>{{ authors|join:", " }}</h3>
+        {% else %}
+          <h3>Unknown Author</h3>
+        {% endif %}
+        <p>
+          {% if description %}
+            {{ description|safe }}
+          {% else %}
+            No description available for this book.
+          {% endif %}
+        </p>
+      </div>
+
+      <div class="recommendations-container">
+        <h3>Recommendations</h3>
+        <div class="book-row">
+          <p>Coming soon...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script type="module" src="{% static 'js/book_preview.js' %}?v=2"></script>
+</body>
+</html>

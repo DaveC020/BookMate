@@ -1,7 +1,7 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: #F4E1A1; /* cream */
+  background: #FAF7F2; /* cream */
   color: #333;
 }
 
@@ -10,8 +10,8 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #465C68; /* slate blue */
-  color: white;
+  background: white; /* WHITE */
+  color: black;
   padding: 1rem 2rem;
 }
 
@@ -48,7 +48,7 @@ body {
 .navbar nav a {
   margin-left: 1.5rem;
   text-decoration: none;
-  color: #F4E1A1; /* cream */
+  color: black; /* black*/
   font-weight: bold;
 }
 
@@ -59,7 +59,6 @@ body {
 /* Sections */
 .welcome {
   padding: 2rem;
-  background: #D4B4A3; /* beige */
   text-align: center;
 }
 
@@ -72,32 +71,112 @@ h3 {
 /* Books grid */
 .book-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 1rem;
-  padding: 0 2rem 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 0.1fr));
+  gap: 1.5rem;
+  padding: 1.5rem 2rem;
+  justify-items: center;
 }
 
+/* The card container */
 .book-card {
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  background-color: #FFF0CE;
+  border-radius: 0.75rem;
   padding: 1rem;
   text-align: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease;
+  width: 200%;
+  max-width: 220px; /* widened from 180px */
+  box-sizing: border-box;
+  margin: 1rem;
 }
 
+.book-card:hover {
+  transform: scale(1.05);
+}
+
+.book-cover,
+.no-cover {
+  width: 100%;
+  height: 230px; /* consistent height */
+  border-radius: 0.5rem;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Force all images to center and fit properly */
 .book-cover {
-  background: #B17073; /* mauve placeholder */
-  height: 200px;
-  border-radius: 5px;
-  margin-bottom: 1rem;
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 4; /* keeps book-like proportions */
+  border-radius: 0.5rem;
+  object-fit: cover;
+  margin-bottom: 0.75rem;
 }
 
-.book-title {
-  font-weight: bold;
-  color: #4A2D33;
-}
-
-.book-author, .book-genre {
-  font-size: 0.9rem;
+/* No cover fallback */
+.no-cover {
   color: #555;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+
+/* Title & author */
+.book-title {
+  font-weight: 700;
+  color: #333;
+  font-size: 0.95rem;
+  margin-bottom: 0.3rem;
+  line-height: 1.2em;
+  height: 2.4em;
+  overflow: hidden;
+}
+
+.book-author {
+  color: #777;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+  height: 1.5em;
+  overflow: hidden;
+}
+
+/* Button inside the card */
+.add-btn {
+  background: #B17073;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.75rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.add-btn:hover {
+  background: #4A2D33;
+}
+
+.book-card-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.book-card-link:hover .book-card {
+  transform: scale(1.03);
+  transition: transform 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.search-book-card {
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-book-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }

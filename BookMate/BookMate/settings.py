@@ -58,6 +58,13 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'BookMate.urls'
 
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "unique-book-cache",
+    }
+}
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
