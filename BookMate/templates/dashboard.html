@@ -5,16 +5,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard - BookMate</title>
-  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}?v=9">
 </head>
 <body>
   <!-- Navbar -->
   <header class="navbar">
     <div class="logo">BookMate</div>
+
+    <!-- 🔍 Search Bar -->
     <div class="search-bar">
-      <input type="text" placeholder="Search books...">
-      <button>🔍</button>
+      <input id="searchInput" type="text" placeholder="Search books...">
+      <button id="searchButton" type="button">🔍</button>
     </div>
+
     <nav>
       <a href="#">Community</a>
       <a href="#">Profile</a>
@@ -22,21 +25,34 @@
   </header>
 
   <!-- Welcome Section -->
-  <section class="welcome">
+  <section class="welcome" id="welcome-section">
     <h2>Welcome back, {{ user.username }}!</h2>
   </section>
 
-  <!-- Currently Reading (only show if user has books) -->
+<!-- Keep your search results hidden by default -->
+  <section id="search-results" style="display: none;">
+    <h3>Search Results</h3>
+    <div class="book-grid" id="results-grid"></div>
+  </section>
+
+
+  <!-- 📖 User's Book List -->
   <section class="currently-reading">
     <h3>Currently Reading</h3>
-    <div class="book-grid">
-      <!-- Example book card -->
-      <div class="book-card">
-        <div class="book-cover"></div>
-        <p class="book-title">Book Title</p>
-        <p class="book-author">Author</p>
-        <p class="book-genre">Genre</p>
+    <div class="book-grid" id="user-books">
+      {% for book in user_books %}
+      <div class="book-card" data-olid="{{ book.olid }}">
+        <a href="{% url 'book_preview' book.olid %}" class="book-card-link">
+          <img src="{{ book.cover_url }}" alt="cover" class="book-cover">
+          <p class="book-title">{{ book.title }}</p>
+          <p class="book-author">{{ book.author }}</p>
+        </a>
+        <!-- ❌ Remove Button -->
+        <button class="remove-btn" data-olid="{{ book.olid }}">Remove</button>
       </div>
+      {% empty %}
+        <p>No books added yet. Try searching above!</p>
+      {% endfor %}
     </div>
   </section>
 
@@ -59,7 +75,8 @@
     </div>
   </section>
 
-  <script src="{% static 'js/dashboard.js' %}"></script>
+  <!-- JS -->
+  <script type="module" src="{% static 'js/dashboard.js' %}?v=10"></script>
+
 </body>
 </html>
-    

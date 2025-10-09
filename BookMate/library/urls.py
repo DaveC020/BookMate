@@ -7,4 +7,10 @@ urlpatterns = [
     path('register/', views.register_view, name='register'),
     path('genres/', views.genre_setup_view, name='genre_setup'),
     path('dashboard/', views.dashboard_view, name='dashboard'),  
+    path('book/<str:olid>/', views.book_preview, name='book_preview'),
+
+    # --- API routes for Open Library ---
+    path('api/search/', views.search_books, name='search_books'),
+    path('api/add_book/', views.add_book, name='add_book'),
+    path('api/remove_book/', views.remove_book, name='remove_book'),
 ]
