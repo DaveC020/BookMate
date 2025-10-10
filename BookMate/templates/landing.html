@@ -2,34 +2,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BookMate</title>
-  <link rel="stylesheet" href="{% static 'css/landing.css' %}?v=4">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BookMate — Your Reading Journey</title>
+  <link rel="stylesheet" href="{% static 'css/landing.css' %}">
 </head>
 <body>
-  <div class="hero">
-    <!-- Left Section -->
-    <div class="left">
-      <div class="logo">▮▮</div>
-      <h1><span class="brand">BookMate</span></h1>
-      <p>Discover books that match your mood.</p>
-      <div>
-        <a href="{% url 'register' %}" class="btn-primary">Sign up</a>
-        <a href="{% url 'login' %}" class="btn-link">Login</a>
-      </div>
+  <header class="navbar">
+    <div class="nav-logo">
+      <img src="{% static 'images/logo.png' %}" alt="BookMate Logo">
+      <span class="brand">BookMate</span>
+    </div>
+    <nav class="nav-links">
+      <a href="{% url 'register' %}" class="btn-signup">Sign up</a>
+      <a href="{% url 'login' %}" class="btn-signin">Sign in</a>
+    </nav>
+  </header>
+
+  <main class="hero-section">
+    <div class="hero-content">
+      <h1>Your Reading Journey, <span>Beautifully Tracked</span></h1>
+      <p>Never lose your place again. BookMate helps you log books, track your progress, and discover your next favorite read — all while connecting with a community of book lovers.</p>
+      <a href="{% url 'register' %}" class="btn-learn">Learn more</a>
     </div>
 
-    <!-- Right Section -->
-    <div class="right">
-      <div class="overlay"></div>
-      <button class="browse">Browse Books</button>
+    <div class="hero-image">
+      <img src="{% static 'images/bg.webp' %}" alt="Books and Reading">
     </div>
-  </div>
+  </main>
 
-  <!-- Footer -->
-  <div class="footer">
-    Welcome to BookMate — your personal reading companion. Track your books, explore new titles, and make every page count.
-  </div>
+  <footer class="footer">
+    <p>© 2025 BookMate — Track your books, explore new titles, and make every page count.</p>
+  </footer>
 </body>
 </html>

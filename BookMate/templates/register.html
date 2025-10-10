@@ -4,37 +4,45 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Register - BookMate</title>
+  <title>Register — BookMate</title>
   <link rel="stylesheet" href="{% static 'css/auth.css' %}">
 </head>
 <body>
-  <div class="auth-container">
-    <div class="form-box">
-      <h1>Join BookMate ✨</h1>
-      <p>Create an account to start tracking your books</p>
-      
+  <header class="navbar">
+    <div class="nav-logo">
+      <img src="{% static 'images/logo.png' %}" alt="BookMate Logo">
+      <span class="brand">BookMate</span>
+    </div>
+  </header>
+
+  <main class="auth-wrapper">
+    <div class="auth-box">
+      <div class="auth-tabs">
+        <a href="{% url 'login' %}">Login</a>
+        <a href="{% url 'register' %}" class="active">Sign up</a>
+      </div>
+
       {% if messages %}
         <div class="messages">
           {% for message in messages %}
-            {% if 'success' in message.tags %}
-              <p style="color: green;">{{ message }}</p>
-            {% else %}
-              <p style="color: red;">{{ message }}</p>
-            {% endif %}
+            <p>
+              {{ message }}
+            </p>
           {% endfor %}
         </div>
       {% endif %}
 
-
       <form method="post">
+        {% csrf_token %}
+
         {% if form.non_field_errors %}
-          <div class="form-errors">
+          <div class="error">
             {% for error in form.non_field_errors %}
-              <p style="color: red;">⚠️ {{ error }}</p>
+              <p>⚠️ {{ error }}</p>
             {% endfor %}
           </div>
         {% endif %}
-        {% csrf_token %}
+
         <div class="input-group">
           {{ form.username.label_tag }}
           {{ form.username }}
@@ -53,9 +61,7 @@
 
         <div class="input-group">
           {{ form.password1.label_tag }}
-          <div class="pw-wrap">
-            {{ form.password1}}
-          </div>
+          {{ form.password1 }}
           {% if form.password1.errors %}
             <div class="error">{{ form.password1.errors }}</div>
           {% endif %}
@@ -63,21 +69,16 @@
 
         <div class="input-group">
           {{ form.password2.label_tag }}
-          <div class="pw-wrap">
-            {{ form.password2 }}
-          </div>
+          {{ form.password2 }}
           {% if form.password2.errors %}
             <div class="error">{{ form.password2.errors }}</div>
           {% endif %}
         </div>
+
         <button type="submit" class="btn-primary">Register</button>
       </form>
-      <script src="{% static 'js/pw-toggle.js' %}"></script>
 
-      <p class="switch-text">
-        Already have an account? <a href="{% url 'login' %}">Login here</a>
-      </p>
     </div>
-  </div>
+  </main>
 </body>
 </html>
