@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard - BookMate</title>
+  <title>Dashboard — BookMate</title>
   <link rel="stylesheet" href="{% static 'css/dashboard.css' %}?v=9">
 </head>
 <body>
@@ -18,32 +18,32 @@
       <button id="searchButton" type="button">🔍</button>
     </div>
 
-    <nav>
+    <!-- Navigation Links -->
+    <nav class="nav-links">
       <a href="#">Community</a>
-      <a href="#">Profile</a>
+      <a href="{% url 'profile' %}" class="btn-profile">Profile</a>
     </nav>
   </header>
 
-  <!-- Welcome Section -->
+  <!-- 👋 Welcome Section -->
   <section class="welcome" id="welcome-section">
     <h2>Welcome back, {{ user.username }}!</h2>
   </section>
 
-<!-- Keep your search results hidden by default -->
+  <!-- 🔍 Search Results -->
   <section id="search-results" style="display: none;">
     <h3>Search Results</h3>
     <div class="book-grid" id="results-grid"></div>
   </section>
 
-
-  <!-- 📖 User's Book List -->
+  <!-- 📚 User's Book List -->
   <section class="currently-reading">
     <h3>Currently Reading</h3>
     <div class="book-grid" id="user-books">
       {% for book in user_books %}
       <div class="book-card" data-olid="{{ book.olid }}">
         <a href="{% url 'book_preview' book.olid %}" class="book-card-link">
-          <img src="{{ book.cover_url }}" alt="cover" class="book-cover">
+          <img src="{{ book.cover_url }}" alt="{{ book.title }} cover" class="book-cover">
           <p class="book-title">{{ book.title }}</p>
           <p class="book-author">{{ book.author }}</p>
         </a>
@@ -56,7 +56,7 @@
     </div>
   </section>
 
-  <!-- Recommendations -->
+  <!-- 💡 Recommendations -->
   <section class="recommendations">
     <h3>Recommendations</h3>
     <div class="book-grid">
@@ -77,6 +77,6 @@
 
   <!-- JS -->
   <script type="module" src="{% static 'js/dashboard.js' %}?v=10"></script>
-
 </body>
 </html>
+

@@ -1,0 +1,99 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ user.username }} — Profile | BookMate</title>
+  <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+</head>
+<body>
+  <header class="navbar">
+    <div class="nav-logo">
+      <img src="{% static 'images/logo.png' %}" alt="BookMate Logo">
+      <span class="brand">BookMate</span>
+    </div>
+    <nav>
+      <a href="{% url 'dashboard' %}">Dashboard</a>
+      <a href="{% url 'edit_profile' %}" class="btn-primary">Edit Profile</a>
+    </nav>
+  </header>
+
+  <main class="profile-container">
+    <!-- LEFT SIDEBAR -->
+    <section class="profile-sidebar">
+      <div class="user-info">
+        <img src="{% static 'images/user-placeholder.png' %}" alt="User Avatar" class="avatar">
+        <h2>{{ user.username }}</h2>
+        <p>{{ user.email }}</p>
+        <a href="{% url 'edit_profile' %}" class="edit-btn">Edit Profile</a>
+      </div>
+
+      <div class="genres">
+        <h3>Genres</h3>
+        <div class="tags">
+          <span>Fantasy</span>
+          <span>Romance</span>
+          <span>Mystery</span>
+        </div>
+      </div>
+
+      <div class="bio">
+        <h3>Bio</h3>
+        <p>{{ user.profile.bio|default:"No bio added yet." }}</p>
+      </div>
+    </section>
+
+    <!-- MAIN SECTION -->
+    <section class="profile-main">
+      <div class="reading-stats">
+        <h3>Reading Stats</h3>
+        <div class="stats-cards">
+          <div class="stat-card">Currently Reading</div>
+          <div class="stat-card">Finished Books</div>
+          <div class="stat-card">To-Read</div>
+        </div>
+      </div>
+
+      <div class="bookshelves">
+        <h3>My Bookshelves</h3>
+
+        <div class="shelf">
+          <h4>Currently Reading</h4>
+          <div class="book-card">
+            <img src="{% static 'images/book-placeholder.png' %}" alt="Book Cover">
+            <div>
+              <p><strong>Book Title</strong></p>
+              <p>Author Name</p>
+              <p>Progress: 120 / 300 pages</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="shelf">
+          <h4>Finished Books</h4>
+          <div class="book-card">
+            <img src="{% static 'images/book-placeholder.png' %}" alt="Book Cover">
+            <div>
+              <p><strong>Book Title</strong></p>
+              <p>Author Name</p>
+              <p>Rating: ★★★★☆</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="shelf">
+          <h4>To-Read List</h4>
+          <div class="book-card">
+            <img src="{% static 'images/book-placeholder.png' %}" alt="Book Cover">
+            <div>
+              <p><strong>Book Title</strong></p>
+              <p>Author Name</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
