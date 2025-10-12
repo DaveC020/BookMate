@@ -1,0 +1,73 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Profile — BookMate</title>
+  <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+</head>
+<body>
+  <!-- 🔙 Navbar -->
+  <header class="navbar">
+    <div class="nav-logo">
+      <img src="{% static 'images/logo.png' %}" alt="BookMate Logo">
+      <span class="brand">BookMate</span>
+    </div>
+
+    <nav>
+      
+      <a href="{% url 'profile' %}" class="btn-secondary">Cancel Changes</a>
+    </nav>
+  </header>
+
+  <main class="edit-container">
+    <form class="edit-box" method="post">
+      {% csrf_token %}
+      <div class="profile-photo">
+        <img src="{% static 'images/user-placeholder.png' %}" alt="User Avatar">
+        <button type="button" class="upload-btn">Upload New Photo</button>
+      </div>
+
+      <div class="input-group">
+        <label>Bio</label>
+        <textarea name="bio" placeholder="Tell us about yourself...">{{ user.profile.bio }}</textarea>
+      </div>
+
+      <div class="input-group">
+        <label>Username</label>
+        <input type="text" name="username" value="{{ user.username }}">
+      </div>
+
+      <div class="input-group">
+        <label>Email</label>
+        <input type="email" name="email" value="{{ user.email }}">
+      </div>
+
+      <div class="input-group">
+        <label>Password</label>
+        <input type="password" name="password1" placeholder="Enter new password">
+      </div>
+
+      <div class="input-group">
+        <label>Confirm Password</label>
+        <input type="password" name="password2" placeholder="Confirm password">
+      </div>
+
+      <div class="genre-section">
+        <h3>Genres</h3>
+        <div class="genre-grid">
+          <label><input type="checkbox"> Fantasy</label>
+          <label><input type="checkbox"> Mystery</label>
+          <label><input type="checkbox"> Romance</label>
+          <label><input type="checkbox"> Science Fiction</label>
+          <label><input type="checkbox"> History</label>
+          <label><input type="checkbox"> Thriller</label>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary">Save</button>
+    </form>
+  </main>
+</body>
+</html>

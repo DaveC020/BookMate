@@ -69,6 +69,44 @@ def dashboard_view(request):
     })
 
 
+
+def profile_view(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+    return render(request, 'profile.html', {'user': request.user})
+
+
+def edit_profile_view(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+    user = request.user
+
+    if request.method == "POST":
+        username = request.POST.get("username")
+        email = request.POST.get("email")
+        password1 = request.POST.get("password1")
+        password2 = request.POST.get("password2")
+
+        # Update basic info
+        user.username = username
+        user.email = email
+
+        # Handle password update (optional)
+        if password1 and password1 == password2:
+            user.set_password(password1)
+            messages.success(request, "✅ Password updated successfully!")
+        elif password1 or password2:
+            messages.error(request, "⚠️ Passwords do not match!")
+
+        user.save()
+        messages.success(request, "✅ Profile updated successfully!")
+        return redirect('profile')
+
+    return render(request, 'edit_profile.html', {"user": user})
+
+
+
 #api functionalities
 import requests
 from django.http import JsonResponse
