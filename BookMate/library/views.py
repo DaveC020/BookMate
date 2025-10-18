@@ -1,30 +1,58 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.contrib import messages
 from .forms import RegisterForm, LoginForm
 from django.contrib.auth.models import User
 from .models import UserBookList
 from django.shortcuts import render, get_object_or_404
 from django.core.cache import cache
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from django.db import IntegrityError
 
 #register function
 def register_view(request):
     if request.method == "POST":
         form = RegisterForm(request.POST)
         if form.is_valid():
-            user = form.save(commit=False)
-            user.set_password(form.cleaned_data["password1"])
-            user.save()
-            messages.success(request, "✅ Registration successful! You can now log in.")
-            return redirect("login")
+            try:
+                user = form.save(commit=False)
+                user.set_password(form.cleaned_data["password1"])
+                user.save()
+                messages.success(request, "Registration successful! Please sign in to continue.")
+                return redirect(f"{reverse('landing')}?modal=login")
+            except IntegrityError:
+                # Username or email already exists
+                print("IntegrityError: Username already exists")
+                request.session['register_errors'] = {
+                    'username': ['This username is already taken. Please choose another one.']
+                }
+                return redirect(f"{reverse('landing')}?modal=register")
             
         else:
-            print(form.errors)  # 👈 this will show why validation failed
-            messages.error(request, "⚠️ Please fix the errors below.")
+            print("=== FORM VALIDATION FAILED ===")
+            print(f"Form errors: {form.errors}")
+            
+            # Store errors in session to display on landing page
+            errors_dict = {}
+            
+            # Handle field-specific errors
+            for field, error_list in form.errors.items():
+                if field == '__all__':
+                    # Non-field errors (like password mismatch) - assign to password2
+                    errors_dict['password2'] = [str(e) for e in error_list]
+                else:
+                    errors_dict[field] = [str(e) for e in error_list]
+            
+            request.session['register_errors'] = errors_dict
+            
+            print(f"Redirecting to landing with modal=register")
+            print(f"Errors to display: {errors_dict}")
+            # Use redirect with query string
+            return redirect(f"{reverse('landing')}?modal=register")
     else:
-        form = RegisterForm()
-
-    return render(request, "register.html", {"form": form})
+        # Redirect GET requests to landing page
+        return redirect("landing")
 
 #login function
 def login_view(request):
@@ -35,20 +63,44 @@ def login_view(request):
 
         # Check if username exists before validating the form
         if not User.objects.filter(username=username).exists():
-            messages.error(request, "⚠️ User does not exist.")
+            request.session['login_errors'] = {'username': ['User does not exist.']}
+            return redirect(f"{reverse('landing')}?modal=login")
         elif form.is_valid():
             user = form.get_user()
             login(request, user)
             return redirect("dashboard")
         else:
-            messages.error(request, "⚠️ Incorrect credentials.")
+            request.session['login_errors'] = {'password': ['Incorrect password.']}
+            return redirect(f"{reverse('landing')}?modal=login")
     else:
-        form = LoginForm()
+        # Redirect GET requests to landing page
+        return redirect("landing")
 
-    return render(request, "login.html", {"form": form})
+def logout_view(request):
+    logout(request)
+    messages.success(request, "✅ You have been logged out successfully.")
+    return redirect("landing")
 
 def landing_view(request):
-    return render(request, 'landing.html')
+    # Get form errors from session if they exist
+    register_errors = request.session.pop('register_errors', {})
+    login_errors = request.session.pop('login_errors', {})
+    open_modal = request.GET.get('modal', '')
+    
+    # DEBUG: Test if messages work
+    if request.GET.get('test'):
+        messages.info(request, "🔔 This is a test notification!")
+        messages.error(request, "⚠️ This is a test error!")
+        messages.success(request, "✅ This is a test success!")
+    
+    if request.GET.get('modal'):
+        print(f"Modal parameter detected: {request.GET.get('modal')}")
+    
+    return render(request, 'landing.html', {
+        'register_errors': register_errors,
+        'login_errors': login_errors,
+        'open_modal': open_modal,
+    })
 
 def genre_setup_view(request):
     if request.method == "POST":
@@ -184,6 +236,77 @@ def remove_book(request):
             return JsonResponse({"message": "Book not found or already removed."}, status=404)
 
     return JsonResponse({"error": "Invalid request"}, status=400)
+
+
+# --- EDIT BOOK DETAILS ---
+@csrf_exempt
+def edit_book(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        olid = data.get("olid")
+        title = data.get("title")
+        author = data.get("author")
+        description = data.get("description")
+
+        if not olid:
+            return JsonResponse({"success": False, "message": "No OLID provided"}, status=400)
+        
+        if not title:
+            return JsonResponse({"success": False, "message": "Title is required"}, status=400)
+
+        try:
+            # Update the book belonging to this user
+            book = UserBookList.objects.get(user=request.user, olid=olid)
+            book.title = title
+            book.author = author or ""
+            book.description = description or ""
+            book.save()
+
+            return JsonResponse({
+                "success": True,
+                "message": "Book details updated successfully!",
+                "book": {
+                    "olid": book.olid,
+                    "title": book.title,
+                    "author": book.author,
+                    "description": book.description
+                }
+            })
+        except UserBookList.DoesNotExist:
+            return JsonResponse({"success": False, "message": "Book not found"}, status=404)
+        except Exception as e:
+            return JsonResponse({"success": False, "message": str(e)}, status=500)
+
+    return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
+
+
+@csrf_exempt
+def toggle_favorite(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        olid = data.get("olid")
+
+        if not olid:
+            return JsonResponse({"success": False, "message": "No OLID provided"}, status=400)
+
+        try:
+            # Toggle favorite status for the book belonging to this user
+            book = UserBookList.objects.get(user=request.user, olid=olid)
+            book.is_favorite = not book.is_favorite
+            book.save()
+
+            return JsonResponse({
+                "success": True,
+                "message": f"Book {'marked' if book.is_favorite else 'unmarked'} as favorite!",
+                "is_favorite": book.is_favorite
+            })
+        except UserBookList.DoesNotExist:
+            return JsonResponse({"success": False, "message": "Book not found"}, status=404)
+        except Exception as e:
+            return JsonResponse({"success": False, "message": str(e)}, status=500)
+
+    return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
+
 
 #DIRECT TO BOOK PREVIEW
 def dashboard(request):

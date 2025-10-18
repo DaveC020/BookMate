@@ -5,6 +5,7 @@ urlpatterns = [
     path('', views.landing_view, name='landing'),
     path('login/', views.login_view, name='login'),
     path('register/', views.register_view, name='register'),
+    path('logout/', views.logout_view, name='logout'),
     path('genres/', views.genre_setup_view, name='genre_setup'),
     path('dashboard/', views.dashboard_view, name='dashboard'),  
     path('book/<str:olid>/', views.book_preview, name='book_preview'),
@@ -15,4 +16,6 @@ urlpatterns = [
     path('api/search/', views.search_books, name='search_books'),
     path('api/add_book/', views.add_book, name='add_book'),
     path('api/remove_book/', views.remove_book, name='remove_book'),
+    path('api/edit_book/', views.edit_book, name='edit_book'),
+    path('api/toggle_favorite/', views.toggle_favorite, name='toggle_favorite'),
 ]

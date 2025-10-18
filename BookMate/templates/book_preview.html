@@ -5,12 +5,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="{% static 'css/book_preview.css' %}?v=1">
+  <link rel="stylesheet" href="{% static 'css/notifications.css' %}">
+  <link rel="stylesheet" href="{% static 'css/confirm-dialog.css' %}">
   <title>{{ title }} - BookMate</title>
 </head>
 <body>
   <!-- Navbar -->
   <header class="navbar">
-    <div class="logo">BookMate</div>
+    <div class="logo">
+      <img src="{% static 'images/logo.png' %}" alt="BookMate Logo" class="logo-image">
+      <span class="logo-text">BookMate</span>
+    </div>
+
+    <div class="nav-center-decor">
+      <div class="vine-left">🌿</div>
+      <div class="scattered-items">
+        <span class="item book" style="--delay: 0s; --rotation: -8deg;">📕</span>
+        <span class="item paper" style="--delay: 0.3s; --rotation: 5deg;">�</span>
+        <span class="item book" style="--delay: 0.6s; --rotation: 12deg;">📘</span>
+        <span class="item paper" style="--delay: 0.9s; --rotation: -15deg;">�</span>
+        <span class="item book" style="--delay: 1.2s; --rotation: -5deg;">📗</span>
+        <span class="item paper" style="--delay: 1.5s; --rotation: 8deg;">�</span>
+        <span class="item book" style="--delay: 1.8s; --rotation: 10deg;">�</span>
+      </div>
+      <div class="vine-right">🌿</div>
+    </div>
 
     <!-- 🔍 Search Bar -->
     <div class="search-bar">
@@ -18,11 +37,29 @@
       <button id="searchButton" type="button">🔍</button>
     </div>
 
-    <nav>
-      <a href="#">Community</a>
-      <a href="#">Profile</a>
-    </nav>
+    <!-- Hamburger Menu -->
+    <div class="hamburger-menu">
+      <button class="hamburger-btn" id="hamburgerBtn">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+      <div class="dropdown-menu" id="dropdownMenu">
+        <a href="{% url 'dashboard' %}{% if request.GET.search %}?search={{ request.GET.search }}{% endif %}">📚 Dashboard</a>
+        <a href="#">👥 Community</a>
+        <a href="{% url 'profile' %}">👤 Profile</a>
+        <a href="{% url 'logout' %}" class="logout-link">🚪 Logout</a>
+      </div>
+    </div>
   </header>
+
+  <!-- Back Button -->
+  <div class="back-button-container">
+    <a href="{% url 'dashboard' %}{% if request.GET.search %}?search={{ request.GET.search }}{% endif %}" class="back-button">
+      <span class="back-arrow">←</span>
+      <span class="back-text">Back to Dashboard</span>
+    </a>
+  </div>
 
   <div class="main-container">
     <div class="left-container">

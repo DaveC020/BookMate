@@ -6,6 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BookMate — Your Reading Journey</title>
   <link rel="stylesheet" href="{% static 'css/landing.css' %}">
+  <link rel="stylesheet" href="{% static 'css/notifications.css' %}">
+  <link rel="stylesheet" href="{% static 'css/confirm-dialog.css' %}">
 </head>
 <body>
   <header class="navbar">
@@ -13,17 +15,142 @@
       <img src="{% static 'images/logo.png' %}" alt="BookMate Logo">
       <span class="brand">BookMate</span>
     </div>
+    <div class="nav-center-decor">
+      <div class="vine-left">🌿</div>
+      <div class="scattered-items">
+        <span class="item book" style="--delay: 0s; --rotation: -8deg;">📕</span>
+        <span class="item paper" style="--delay: 0.3s; --rotation: 5deg;">�</span>
+        <span class="item book" style="--delay: 0.6s; --rotation: 12deg;">📘</span>
+        <span class="item paper" style="--delay: 0.9s; --rotation: -15deg;">�</span>
+        <span class="item book" style="--delay: 1.2s; --rotation: -5deg;">📗</span>
+        <span class="item paper" style="--delay: 1.5s; --rotation: 8deg;">�</span>
+        <span class="item book" style="--delay: 1.8s; --rotation: 10deg;">�</span>
+      </div>
+      <div class="vine-right">🌿</div>
+    </div>
     <nav class="nav-links">
-      <a href="{% url 'register' %}" class="btn-signup">Sign up</a>
-      <a href="{% url 'login' %}" class="btn-signin">Sign in</a>
+      <a href="#" class="btn-signup" id="openSignupModal">Sign up</a>
+      <a href="#" class="btn-signin" id="openLoginModal">Sign in</a>
     </nav>
   </header>
 
+  <!-- Login Modal -->
+  <div class="modal" id="loginModal">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+      <button class="modal-close" id="closeLoginModal">&times;</button>
+      <div class="modal-header">
+        <img src="{% static 'images/logo.png' %}" alt="BookMate Logo" class="modal-logo">
+        <h2>Welcome Back!</h2>
+        <p>Sign in to continue your reading journey</p>
+      </div>
+      
+      <!-- Success message banner -->
+      {% if messages %}
+        {% for message in messages %}
+          {% if message.tags == 'success' %}
+            <div class="success-banner">
+              <span class="success-icon">✓</span>
+              <span class="success-text">{{ message }}</span>
+            </div>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+      
+      <form method="post" action="{% url 'login' %}" class="modal-form">
+        {% csrf_token %}
+        <div class="input-group">
+          <label for="login-username">Username</label>
+          <input type="text" id="login-username" name="username" required
+                 class="{% if login_errors.username %}error{% endif %}">
+          {% if login_errors.username %}
+            <span class="error-message">{{ login_errors.username.0 }}</span>
+          {% endif %}
+        </div>
+        <div class="input-group">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" name="password" required
+                 class="{% if login_errors.password %}error{% endif %}">
+          {% if login_errors.password %}
+            <span class="error-message">{{ login_errors.password.0 }}</span>
+          {% endif %}
+        </div>
+        <button type="submit" class="btn-modal-primary">Sign In</button>
+      </form>
+      <div class="modal-footer">
+        <p>Don't have an account? <a href="#" id="switchToSignup">Sign up</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Register Modal -->
+  <div class="modal" id="registerModal">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+      <button class="modal-close" id="closeRegisterModal">&times;</button>
+      <div class="modal-header">
+        <img src="{% static 'images/logo.png' %}" alt="BookMate Logo" class="modal-logo">
+        <h2>Join BookMate</h2>
+        <p>Start tracking your reading journey today</p>
+      </div>
+      <form method="post" action="{% url 'register' %}" class="modal-form">
+        {% csrf_token %}
+        <div class="input-group">
+          <label for="register-username">Username</label>
+          <input type="text" id="register-username" name="username" required 
+                 class="{% if register_errors.username %}error{% endif %}">
+          {% if register_errors.username %}
+            <span class="error-message">{{ register_errors.username.0 }}</span>
+          {% endif %}
+        </div>
+        <div class="input-group">
+          <label for="register-email">Email</label>
+          <input type="email" id="register-email" name="email" required
+                 class="{% if register_errors.email %}error{% endif %}">
+          {% if register_errors.email %}
+            <span class="error-message">{{ register_errors.email.0 }}</span>
+          {% endif %}
+        </div>
+        <div class="input-group">
+          <label for="register-password1">Password</label>
+          <input type="password" id="register-password1" name="password1" required
+                 class="{% if register_errors.password1 %}error{% endif %}">
+          {% if register_errors.password1 %}
+            <span class="error-message">{{ register_errors.password1.0 }}</span>
+          {% endif %}
+        </div>
+        <div class="input-group">
+          <label for="register-password2">Confirm Password</label>
+          <input type="password" id="register-password2" name="password2" required
+                 class="{% if register_errors.password2 %}error{% endif %}">
+          {% if register_errors.password2 %}
+            <span class="error-message">{{ register_errors.password2.0 }}</span>
+          {% endif %}
+        </div>
+        <button type="submit" class="btn-modal-primary">Create Account</button>
+      </form>
+      <div class="modal-footer">
+        <p>Already have an account? <a href="#" id="switchToLogin">Sign in</a></p>
+      </div>
+    </div>
+  </div>
+
   <main class="hero-section">
     <div class="hero-content">
+      <div class="hero-logo">
+        <img src="{% static 'images/logo.png' %}" alt="BookMate Logo">
+      </div>
       <h1>Your Reading Journey, <span>Beautifully Tracked</span></h1>
       <p>Never lose your place again. BookMate helps you log books, track your progress, and discover your next favorite read — all while connecting with a community of book lovers.</p>
       <a href="{% url 'register' %}" class="btn-learn">Learn more</a>
+    </div>
+
+    <div class="hero-divider">
+      <div class="divider-line"></div>
+      <div class="divider-ornament">
+        <div class="book-icon">📚</div>
+      </div>
+      <div class="divider-line"></div>
     </div>
 
     <div class="hero-image">
@@ -34,5 +161,148 @@
   <footer class="footer">
     <p>© 2025 BookMate — Track your books, explore new titles, and make every page count.</p>
   </footer>
+
+  <!-- Django Messages Data -->
+  <div id="django-messages" style="display: none;">
+    {% if messages %}
+      {% for message in messages %}
+        <div class="msg-data" 
+             data-tags="{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}"
+             data-text="{{ message|escapejs }}"
+             data-icon="{% if 'success' in message.tags %}✅{% elif 'error' in message.tags %}❌{% elif 'warning' in message.tags %}⚠️{% else %}ℹ️{% endif %}">
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+
+  <script>
+    // Show Django messages as notifications - runs immediately
+    function showNotifications() {
+      const messagesContainer = document.getElementById('django-messages');
+      console.log('Messages container:', messagesContainer);
+      
+      if (messagesContainer) {
+        const messageDivs = messagesContainer.querySelectorAll('.msg-data');
+        console.log('Found messages:', messageDivs.length);
+        
+        messageDivs.forEach((msgDiv, index) => {
+          console.log('Message data:', msgDiv.dataset);
+          setTimeout(() => {
+            const notification = document.createElement('div');
+            notification.className = 'notification ' + msgDiv.dataset.tags;
+            // Calculate vertical position - stack notifications with 90px gap
+            notification.style.top = (20 + (index * 90)) + 'px';
+            notification.innerHTML = `
+              <span class="notification-icon">${msgDiv.dataset.icon}</span>
+              <span class="notification-message">${msgDiv.dataset.text}</span>
+              <button class="notification-close" onclick="this.parentElement.remove()">×</button>
+            `;
+            document.body.appendChild(notification);
+            console.log('Notification added:', notification);
+            
+            // Only auto-dismiss success messages after 5 seconds
+            // Error and warning messages stay until manually closed
+            if (msgDiv.dataset.tags === 'success') {
+              setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease forwards';
+                setTimeout(() => notification.remove(), 300);
+              }, 5000);
+            }
+          }, index * 100);
+        });
+      }
+    }
+    
+    // Run immediately
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', showNotifications);
+    } else {
+      showNotifications();
+    }
+
+    // Modal functionality
+    const loginModal = document.getElementById('loginModal');
+    const registerModal = document.getElementById('registerModal');
+    const openLoginBtn = document.getElementById('openLoginModal');
+    const openSignupBtn = document.getElementById('openSignupModal');
+    const closeLoginBtn = document.getElementById('closeLoginModal');
+    const closeRegisterBtn = document.getElementById('closeRegisterModal');
+    const switchToSignup = document.getElementById('switchToSignup');
+    const switchToLogin = document.getElementById('switchToLogin');
+
+    // Open modals
+    openLoginBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      loginModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    });
+
+    openSignupBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      registerModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    });
+
+    // Close modals
+    closeLoginBtn.addEventListener('click', () => {
+      loginModal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    });
+
+    closeRegisterBtn.addEventListener('click', () => {
+      registerModal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    });
+
+    // Close on overlay click
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+      overlay.addEventListener('click', () => {
+        loginModal.classList.remove('active');
+        registerModal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+      });
+    });
+
+    // Switch between modals
+    switchToSignup.addEventListener('click', (e) => {
+      e.preventDefault();
+      loginModal.classList.remove('active');
+      registerModal.classList.add('active');
+    });
+
+    switchToLogin.addEventListener('click', (e) => {
+      e.preventDefault();
+      registerModal.classList.remove('active');
+      loginModal.classList.add('active');
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        loginModal.classList.remove('active');
+        registerModal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+      }
+    });
+
+    // Check URL parameters to auto-open modal
+    window.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const modalParam = urlParams.get('modal');
+      
+      // Delay modal opening slightly to ensure notifications appear first
+      if (modalParam === 'login' || modalParam === 'register') {
+        setTimeout(() => {
+          if (modalParam === 'login') {
+            loginModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+          } else if (modalParam === 'register') {
+            registerModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+          }
+        }, 200);
+      }
+    });
+  </script>
 </body>
 </html>
