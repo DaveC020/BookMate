@@ -10,6 +10,7 @@ class UserBookList(models.Model):
     cover_url = models.URLField(blank=True, null=True)
     olid = models.CharField(max_length=50, db_index=True)
     description = models.TextField(blank=True, null=True)
+    is_favorite = models.BooleanField(default=False)
 
     class Meta:
         constraints = [

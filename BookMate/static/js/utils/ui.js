@@ -1,5 +1,6 @@
 // utils/ui.js
 import { addBook } from "./api.js";
+import { showSuccess, showError, showBookNotification } from "./notifications.js";
 
 // 🔄 Toggle between welcome and search results sections
 export function toggleSections(mode) {
@@ -88,9 +89,14 @@ export function attachAddButtonHandlers() {
 
       console.log("Adding book:", payload);
       const result = await addBook(payload);
-      alert(result.message);
-
-      if (result.message === "Book added successfully!") addBookToUserList(payload);
+      
+      // Use custom notification instead of alert
+      if (result.success || result.message === "Book added successfully!" || result.message.includes("added")) {
+        showSuccess("Book added to your list!", { title: "Success" });
+        addBookToUserList(payload);
+      } else {
+        showError(result.message || "Failed to add book", { title: "Error" });
+      }
     });
   });
 }

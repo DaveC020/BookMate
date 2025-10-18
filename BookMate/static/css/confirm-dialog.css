@@ -1,0 +1,269 @@
+/* === CUSTOM CONFIRMATION DIALOG === */
+
+/* Overlay backdrop */
+.confirm-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Confirmation Dialog Box */
+.confirm-dialog {
+  background: linear-gradient(135deg, #FFFFFF 0%, #F9F3E5 100%);
+  border-radius: 16px;
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.4),
+    inset 0 0 0 4px rgba(139, 90, 43, 0.2);
+  border: 4px solid #8B5A2B;
+  min-width: 400px;
+  max-width: 500px;
+  padding: 2.5rem 2rem 2rem;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  position: relative;
+  animation: slideDown 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  z-index: 10000;
+}
+
+/* Book spine effect */
+.confirm-dialog::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 10px;
+  background: linear-gradient(180deg, #C6A34F 0%, #A88939 100%);
+  box-shadow: inset -2px 0 5px rgba(0, 0, 0, 0.3);
+  border-radius: 16px 0 0 16px;
+}
+
+/* Page texture */
+.confirm-dialog::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 20px,
+      rgba(139, 90, 43, 0.02) 20px,
+      rgba(139, 90, 43, 0.02) 21px
+    );
+  pointer-events: none;
+  border-radius: 16px;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100px) scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Header section */
+.confirm-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.confirm-icon {
+  font-size: 2.5rem;
+  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.confirm-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #3B2B1C;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+/* Message */
+.confirm-message {
+  font-size: 1.1rem;
+  color: #4E3B2A;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  padding-left: 3.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* Buttons container */
+.confirm-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  position: relative;
+  z-index: 1;
+}
+
+/* Button base styles */
+.confirm-btn {
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Book spine texture on buttons */
+.confirm-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 3px,
+    rgba(139, 90, 43, 0.1) 3px,
+    rgba(139, 90, 43, 0.1) 4px
+  );
+  pointer-events: none;
+}
+
+.confirm-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.confirm-btn:active {
+  transform: translateY(0);
+}
+
+/* OK Button (primary action) */
+.confirm-btn-ok {
+  background: linear-gradient(135deg, #C6A34F 0%, #A88939 100%);
+  color: white;
+  border: 2px solid #8B5A2B;
+  box-shadow: 
+    0 4px 15px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.confirm-btn-ok:hover {
+  background: linear-gradient(135deg, #D4B261 0%, #B89A4B 100%);
+  box-shadow: 0 6px 20px rgba(198, 163, 79, 0.4);
+}
+
+/* Cancel Button (secondary action) */
+.confirm-btn-cancel {
+  background: linear-gradient(135deg, #8B5A2B 0%, #6D4C41 100%);
+  color: #F9F3E5;
+  border: 2px solid #5D3A1A;
+  box-shadow: 
+    0 4px 15px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.confirm-btn-cancel:hover {
+  background: linear-gradient(135deg, #9D6A3B 0%, #7D5C51 100%);
+  box-shadow: 0 6px 20px rgba(139, 90, 43, 0.4);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .confirm-dialog {
+    min-width: auto;
+    width: 90%;
+    max-width: 400px;
+    padding: 2rem 1.5rem;
+  }
+
+  .confirm-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+
+  .confirm-message {
+    padding-left: 0;
+    text-align: center;
+    font-size: 1rem;
+  }
+
+  .confirm-buttons {
+    flex-direction: column-reverse;
+  }
+
+  .confirm-btn {
+    width: 100%;
+    padding: 1rem;
+  }
+
+  .confirm-icon {
+    font-size: 2rem;
+  }
+
+  .confirm-title {
+    font-size: 1.3rem;
+  }
+}
+
+/* Loading state (optional) */
+.confirm-btn.loading {
+  pointer-events: none;
+  opacity: 0.7;
+  position: relative;
+}
+
+.confirm-btn.loading::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

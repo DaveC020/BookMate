@@ -1,5 +1,8 @@
 // static/js/book_preview.js
 
+// Import notification system
+import { showSuccess, showError } from "./utils/notifications.js";
+
 // ✅ Function to get the CSRF token from cookies
 function getCookie(name) {
   let cookieValue = null;
@@ -43,10 +46,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!res.ok) throw new Error("Failed to add book");
         const data = await res.json();
-        alert("Book added to your list!");
+        showSuccess("Book added to your list!", { title: "Success" });
       } catch (error) {
         console.error(error);
-        alert("❌ Failed to add book.");
+        showError("Failed to add book. Please try again.", { title: "Error" });
+      }
+    });
+  }
+
+  // Hamburger Menu Toggle
+  const hamburgerBtn = document.getElementById("hamburgerBtn");
+  const dropdownMenu = document.getElementById("dropdownMenu");
+
+  if (hamburgerBtn && dropdownMenu) {
+    hamburgerBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      hamburgerBtn.classList.toggle("active");
+      dropdownMenu.classList.toggle("show");
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener("click", (e) => {
+      if (!hamburgerBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+        hamburgerBtn.classList.remove("active");
+        dropdownMenu.classList.remove("show");
       }
     });
   }

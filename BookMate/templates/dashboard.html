@@ -6,23 +6,56 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard — BookMate</title>
   <link rel="stylesheet" href="{% static 'css/dashboard.css' %}?v=9">
+  <link rel="stylesheet" href="{% static 'css/notifications.css' %}">
+  <link rel="stylesheet" href="{% static 'css/confirm-dialog.css' %}">
 </head>
 <body>
   <!-- Navbar -->
   <header class="navbar">
-    <div class="logo">BookMate</div>
-
-    <!-- 🔍 Search Bar -->
-    <div class="search-bar">
-      <input id="searchInput" type="text" placeholder="Search books...">
-      <button id="searchButton" type="button">🔍</button>
+    <div class="logo">
+      <img src="{% static 'images/logo.png' %}" alt="BookMate Logo" class="logo-image">
+      <span class="logo-text">BookMate</span>
     </div>
 
-    <!-- Navigation Links -->
-    <nav class="nav-links">
-      <a href="#">Community</a>
-      <a href="{% url 'profile' %}" class="btn-profile">Profile</a>
-    </nav>
+    <div class="nav-center-container">
+      <div class="nav-left-decor">
+        <div class="vine-left">🌿</div>
+        <div class="scattered-items">
+          <span class="item book" style="--delay: 0s; --rotation: -8deg;">📕</span>
+          <span class="item paper" style="--delay: 0.3s; --rotation: 5deg;">📄</span>
+          <span class="item book" style="--delay: 0.6s; --rotation: 12deg;">📘</span>
+        </div>
+      </div>
+
+      <!-- 🔍 Search Bar -->
+      <div class="search-bar">
+        <input id="searchInput" type="text" placeholder="Search books...">
+        <button id="searchButton" type="button">🔍</button>
+      </div>
+
+      <div class="nav-right-decor">
+        <div class="scattered-items">
+          <span class="item paper" style="--delay: 0.9s; --rotation: -15deg;">�</span>
+          <span class="item book" style="--delay: 1.2s; --rotation: -5deg;">📗</span>
+          <span class="item book" style="--delay: 1.5s; --rotation: 10deg;">📙</span>
+        </div>
+        <div class="vine-right">🌿</div>
+      </div>
+    </div>
+
+    <!-- Hamburger Menu -->
+    <div class="hamburger-menu">
+      <button class="hamburger-btn" id="hamburgerBtn">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+      <div class="dropdown-menu" id="dropdownMenu">
+        <a href="#">👥 Community</a>
+        <a href="{% url 'profile' %}">👤 Profile</a>
+        <a href="{% url 'logout' %}" class="logout-link">🚪 Logout</a>
+      </div>
+    </div>
   </header>
 
   <!-- 👋 Welcome Section -->
@@ -38,17 +71,41 @@
 
   <!-- 📚 User's Book List -->
   <section class="currently-reading">
-    <h3>Currently Reading</h3>
+    <div class="section-header">
+      <h3>Currently Reading</h3>
+      <div class="controls-group">
+        <div class="filter-buttons">
+          <button class="filter-btn active" data-filter="all">All Books</button>
+          <button class="filter-btn" data-filter="favorites">⭐ Favorites</button>
+        </div>
+        <div class="sort-dropdown">
+          <label for="sortSelect">Sort by:</label>
+          <select id="sortSelect" class="sort-select">
+            <option value="title-asc">Title (A-Z)</option>
+            <option value="title-desc">Title (Z-A)</option>
+            <option value="author-asc">Author (A-Z)</option>
+            <option value="author-desc">Author (Z-A)</option>
+            <option value="favorite-first">Favorites First</option>
+          </select>
+        </div>
+      </div>
+    </div>
     <div class="book-grid" id="user-books">
       {% for book in user_books %}
-      <div class="book-card" data-olid="{{ book.olid }}">
+      <div class="book-card" data-olid="{{ book.olid }}" data-title="{{ book.title }}" data-author="{{ book.author|default:'' }}">
         <a href="{% url 'book_preview' book.olid %}" class="book-card-link">
           <img src="{{ book.cover_url }}" alt="{{ book.title }} cover" class="book-cover">
           <p class="book-title">{{ book.title }}</p>
           <p class="book-author">{{ book.author }}</p>
         </a>
-        <!-- ❌ Remove Button -->
-        <button class="remove-btn" data-olid="{{ book.olid }}">Remove</button>
+        <!-- Favorite, Edit and Remove Buttons -->
+        <div class="book-actions">
+          <button class="favorite-btn {% if book.is_favorite %}favorited{% endif %}" data-olid="{{ book.olid }}" title="{% if book.is_favorite %}Remove from favorites{% else %}Add to favorites{% endif %}">
+            <span class="star-icon">{% if book.is_favorite %}★{% else %}☆{% endif %}</span>
+          </button>
+          <button class="edit-btn" data-olid="{{ book.olid }}" data-title="{{ book.title }}" data-author="{{ book.author }}" data-description="{{ book.description }}">✏️ Edit</button>
+          <button class="remove-btn" data-olid="{{ book.olid }}">❌ Remove</button>
+        </div>
       </div>
       {% empty %}
         <p>No books added yet. Try searching above!</p>
@@ -74,6 +131,28 @@
       </div>
     </div>
   </section>
+
+  <!-- Edit Book Modal -->
+  <div id="editBookModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <h2>Edit Book Details</h2>
+      <form id="editBookForm">
+        <input type="hidden" id="editBookOlid" name="olid">
+        
+        <label for="editBookTitle">Title:</label>
+        <input type="text" id="editBookTitle" name="title" required>
+        
+        <label for="editBookAuthor">Author:</label>
+        <input type="text" id="editBookAuthor" name="author">
+        
+        <label for="editBookDescription">Description:</label>
+        <textarea id="editBookDescription" name="description" rows="5"></textarea>
+        
+        <button type="submit" class="save-btn">💾 Save Changes</button>
+      </form>
+    </div>
+  </div>
 
   <!-- JS -->
   <script type="module" src="{% static 'js/dashboard.js' %}?v=10"></script>
