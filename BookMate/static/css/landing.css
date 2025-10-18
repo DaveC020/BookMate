@@ -990,6 +990,69 @@ body::before {
   font-family: 'Georgia', 'Times New Roman', serif;
 }
 
+/* Password wrapper for eye toggle */
+.modal-form .password-wrapper {
+  position: relative;
+  width: 100%;
+  display: block;
+}
+
+.modal-form .password-wrapper input {
+  width: 100%;
+  padding-right: 3rem !important; /* Space for eye icon inside */
+}
+
+/* Password toggle button inside input */
+.modal-form .password-toggle {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  opacity: 0.6;
+  z-index: 10;
+  height: 24px;
+  width: 24px;
+  outline: none;
+}
+
+.modal-form .password-toggle:hover {
+  opacity: 1;
+  color: #334155;
+  transform: translateY(-50%) scale(1.15);
+}
+
+.modal-form .password-toggle:active {
+  transform: translateY(-50%) scale(0.9);
+}
+
+.modal-form .password-toggle:focus {
+  outline: none;
+  opacity: 1;
+}
+
+.modal-form .eye-icon {
+  line-height: 1;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-form .eye-icon svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+}
+
 .modal-form input:focus {
   outline: none;
   border-color: #C6A34F;

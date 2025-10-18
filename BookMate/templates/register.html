@@ -76,7 +76,17 @@
 
         <div class="input-group">
           {{ form.password1.label_tag }}
-          {{ form.password1 }}
+          <div class="password-wrapper">
+            {{ form.password1 }}
+            <button type="button" class="password-toggle" onclick="togglePassword('id_password1', this)">
+              <span class="eye-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </span>
+            </button>
+          </div>
           {% if form.password1.errors %}
             <div class="error">{{ form.password1.errors }}</div>
           {% endif %}
@@ -84,7 +94,17 @@
 
         <div class="input-group">
           {{ form.password2.label_tag }}
-          {{ form.password2 }}
+          <div class="password-wrapper">
+            {{ form.password2 }}
+            <button type="button" class="password-toggle" onclick="togglePassword('id_password2', this)">
+              <span class="eye-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </span>
+            </button>
+          </div>
           {% if form.password2.errors %}
             <div class="error">{{ form.password2.errors }}</div>
           {% endif %}
@@ -95,5 +115,7 @@
 
     </div>
   </main>
+  
+  <script src="{% static 'js/pw-toggle.js' %}"></script>
 </body>
 </html>

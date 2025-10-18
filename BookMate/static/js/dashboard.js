@@ -5,7 +5,7 @@ import {
   renderSearchResults,
   handleBookRemoval,
 } from "./utils/ui.js";
-import { showWarning, showError, showSuccess } from "./utils/notifications.js";
+import { showWarning, showError, showSuccess, showInfo } from "./utils/notifications.js";
 import { confirmBookRemoval } from "./utils/confirm-dialog.js";
 
 console.log("Dashboard loaded ✅");
@@ -51,7 +51,14 @@ function initSearchHandler() {
   });
 }
 
+// Flag to prevent multiple initializations
+let favoriteHandlerInitialized = false;
+
 function initFavoriteHandler() {
+  // Prevent multiple event listener attachments
+  if (favoriteHandlerInitialized) return;
+  favoriteHandlerInitialized = true;
+
   document.addEventListener("click", async (event) => {
     if (!event.target.closest(".favorite-btn")) return;
 
@@ -59,6 +66,10 @@ function initFavoriteHandler() {
     const olid = button.dataset.olid;
     
     if (!olid) return showWarning("Missing book ID!", { title: "Error" });
+    
+    // Prevent double-clicks
+    if (button.disabled) return;
+    button.disabled = true;
 
     try {
       const response = await fetch("/api/toggle_favorite/", {
@@ -85,7 +96,7 @@ function initFavoriteHandler() {
           button.classList.remove("favorited");
           starIcon.textContent = "☆";
           button.title = "Add to favorites";
-          showSuccess("Removed from favorites", { title: "Success" });
+          showInfo("Removed from favorites", { title: "Favorite Removed" });
         }
         
         // Re-apply current sort if sorting by favorites
@@ -99,11 +110,23 @@ function initFavoriteHandler() {
     } catch (err) {
       console.error("❌ Error toggling favorite:", err);
       showError("Something went wrong while updating.", { title: "Error" });
+    } finally {
+      // Re-enable button after request completes
+      setTimeout(() => {
+        button.disabled = false;
+      }, 300);
     }
   });
 }
 
+// Flag to prevent multiple initializations
+let filterHandlerInitialized = false;
+
 function initFilterHandler() {
+  // Prevent multiple event listener attachments
+  if (filterHandlerInitialized) return;
+  filterHandlerInitialized = true;
+
   const filterButtons = document.querySelectorAll(".filter-btn");
   const bookCards = document.querySelectorAll("#user-books .book-card");
 
@@ -175,7 +198,14 @@ function restoreSearchFromURL() {
   }
 }
 
+// Flag to prevent multiple initializations
+let removeHandlerInitialized = false;
+
 function initRemoveHandler() {
+  // Prevent multiple event listener attachments
+  if (removeHandlerInitialized) return;
+  removeHandlerInitialized = true;
+
   document.addEventListener("click", async (event) => {
     if (!event.target.classList.contains("remove-btn")) return;
 
@@ -206,7 +236,14 @@ function initRemoveHandler() {
   });
 }
 
+// Flag to prevent multiple initializations
+let editHandlerInitialized = false;
+
 function initEditHandler() {
+  // Prevent multiple event listener attachments
+  if (editHandlerInitialized) return;
+  editHandlerInitialized = true;
+
   const modal = document.getElementById("editBookModal");
   const closeBtn = modal.querySelector(".close-modal");
   const form = document.getElementById("editBookForm");
@@ -371,7 +408,14 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+// Flag to prevent multiple initializations
+let sortHandlerInitialized = false;
+
 function initSortHandler() {
+  // Prevent multiple event listener attachments
+  if (sortHandlerInitialized) return;
+  sortHandlerInitialized = true;
+
   const sortSelect = document.getElementById("sortSelect");
   
   if (!sortSelect) {
