@@ -479,6 +479,66 @@ body::after {
   transform: translateY(-2px);
 }
 
+/* Password Toggle - Professional Style */
+.password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.password-wrapper input {
+  width: 100%;
+  padding-right: 3rem; /* Space for the eye button inside */
+}
+
+.password-toggle {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  padding: 0.3rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  opacity: 0.6;
+  z-index: 10;
+  height: 24px;
+  width: 24px;
+}
+
+.password-toggle:hover {
+  opacity: 1;
+  color: #334155;
+  transform: translateY(-50%) scale(1.15);
+}
+
+.password-toggle:active {
+  transform: translateY(-50%) scale(0.9);
+}
+
+.password-toggle:focus {
+  outline: none;
+  opacity: 1;
+}
+
+.eye-icon {
+  line-height: 1;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.eye-icon svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+}
+
 /* === BUTTON === */
 .btn-primary {
   width: 100%;

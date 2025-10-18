@@ -828,38 +828,50 @@ h3::before {
 }
 
 .favorite-btn {
-  background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%);
-  color: white;
+  background: linear-gradient(135deg, #E8E8E8 0%, #D0D0D0 100%);
+  color: #666;
   display: flex;
   align-items: center;
   justify-content: center;
   max-width: 50px;
   position: relative;
+  border: 2px solid #CCC;
 }
 
 .favorite-btn .star-icon {
   font-size: 1.2rem;
   transition: transform 0.3s ease;
+  filter: grayscale(100%);
 }
 
 .favorite-btn:hover {
-  background: linear-gradient(135deg, #FF8C00 0%, #FF7F00 100%);
+  background: linear-gradient(135deg, #F5F5F5 0%, #E0E0E0 100%);
   transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 4px 12px rgba(255, 165, 0, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-color: #BBB;
 }
 
 .favorite-btn:hover .star-icon {
   transform: scale(1.2) rotate(15deg);
+  filter: grayscale(50%);
 }
 
 .favorite-btn.favorited {
-  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  background: linear-gradient(135deg, #FFD700 0%, #FF8C00 100%);
+  border: 2px solid #FFA500;
   animation: favoriteGlow 0.5s ease;
 }
 
 .favorite-btn.favorited .star-icon {
   color: #fff;
-  text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+  text-shadow: 0 0 15px rgba(255, 215, 0, 1), 0 0 25px rgba(255, 165, 0, 0.8);
+  filter: grayscale(0%) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.favorite-btn.favorited:hover {
+  background: linear-gradient(135deg, #FFE44D 0%, #FF9500 100%);
+  border-color: #FFB700;
+  box-shadow: 0 4px 16px rgba(255, 165, 0, 0.6);
 }
 
 @keyframes favoriteGlow {

@@ -68,7 +68,17 @@
 
         <div class="input-group">
           {{ form.password.label_tag }}
-          {{ form.password }}
+          <div class="password-wrapper">
+            {{ form.password }}
+            <button type="button" class="password-toggle" onclick="togglePassword('id_password', this)">
+              <span class="eye-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </span>
+            </button>
+          </div>
           {% if form.password.errors %}
             <div class="error">{{ form.password.errors }}</div>
           {% endif %}
@@ -79,5 +89,7 @@
 
     </div>
   </main>
+  
+  <script src="{% static 'js/pw-toggle.js' %}"></script>
 </body>
 </html>
