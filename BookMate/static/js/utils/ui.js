@@ -112,14 +112,35 @@ export function addBookToUserList(payload) {
 
   const newCard = document.createElement("div");
   newCard.className = "book-card";
+  newCard.setAttribute("data-olid", payload.olid);
+  newCard.setAttribute("data-title", payload.title);
+  newCard.setAttribute("data-author", payload.author || "");
+  newCard.setAttribute("data-description", payload.description || "");
+
   newCard.innerHTML = `
-    <img src="${payload.cover_url || ""}" alt="cover" class="book-cover">
-    <p class="book-title">${payload.title}</p>
-    <p class="book-author">${payload.author || "Unknown"}</p>
-    <button class="remove-btn" data-olid="${payload.olid}">Remove</button>
+    <a href="/book/${payload.olid}" class="book-card-link">
+      <img src="${payload.cover_url || ""}" alt="${payload.title} cover" class="book-cover">
+      <p class="book-title">${payload.title}</p>
+      <p class="book-author">${payload.author || "Unknown"}</p>
+    </a>
+    <div class="book-actions">
+      <button class="favorite-btn" data-olid="${payload.olid}" title="Add to favorites">
+        <span class="star-icon">☆</span>
+      </button>
+      <button class="edit-btn"
+        data-olid="${payload.olid}"
+        data-title="${payload.title}"
+        data-author="${payload.author || ""}"
+        data-description="${payload.description || ""}">
+        ✏️ Edit
+      </button>
+      <button class="remove-btn" data-olid="${payload.olid}">❌ Remove</button>
+    </div>
   `;
+
   userBooksGrid.appendChild(newCard);
 }
+
 
 // ❌ Handle removal from DOM
 export function handleBookRemoval(removeBtn) {
