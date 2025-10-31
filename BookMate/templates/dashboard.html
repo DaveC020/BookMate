@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard — BookMate</title>
-  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}?v=9">
+  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}?v=10">
   <link rel="stylesheet" href="{% static 'css/notifications.css' %}">
   <link rel="stylesheet" href="{% static 'css/confirm-dialog.css' %}">
 </head>
@@ -92,7 +92,7 @@
     </div>
     <div class="book-grid" id="user-books">
       {% for book in user_books %}
-      <div class="book-card" data-olid="{{ book.olid }}" data-title="{{ book.title }}" data-author="{{ book.author|default:'' }}">
+      <div class="book-card" data-olid="{{ book.olid }}" data-title="{{ book.title }}" data-author="{{ book.author|default:'' }}" data-pages="{{ book.pages }}">
         <a href="{% url 'book_preview' book.olid %}" class="book-card-link">
           <img src="{{ book.cover_url }}" alt="{{ book.title }} cover" class="book-cover">
           <p class="book-title">{{ book.title }}</p>
@@ -103,7 +103,12 @@
           <button class="favorite-btn {% if book.is_favorite %}favorited{% endif %}" data-olid="{{ book.olid }}" title="{% if book.is_favorite %}Remove from favorites{% else %}Add to favorites{% endif %}">
             <span class="star-icon">{% if book.is_favorite %}★{% else %}☆{% endif %}</span>
           </button>
-          <button class="edit-btn" data-olid="{{ book.olid }}" data-title="{{ book.title }}" data-author="{{ book.author }}" data-description="{{ book.description }}">✏️ Edit</button>
+          <button 
+            class="edit-btn" 
+            data-olid="{{ book.olid }}" 
+            data-page="{{ book.current_page }}"
+            data-pages="{{ book.pages }}">
+            Edit</button>
           <button class="remove-btn" data-olid="{{ book.olid }}">❌ Remove</button>
         </div>
       </div>
@@ -132,30 +137,29 @@
     </div>
   </section>
 
-  <!-- Edit Book Modal -->
-  <div id="editBookModal" class="modal" style="display: none;">
+<!-- Edit Book Progress Modal -->
+  <div id="editBookModal" class="modal">
     <div class="modal-content">
       <span class="close-modal">&times;</span>
-      <h2>Edit Book Details</h2>
+
+      <h2>Update Reading Progress</h2>
+
       <form id="editBookForm">
-        <input type="hidden" id="editBookOlid" name="olid">
-        
-        <label for="editBookTitle">Title:</label>
-        <input type="text" id="editBookTitle" name="title" required>
-        
-        <label for="editBookAuthor">Author:</label>
-        <input type="text" id="editBookAuthor" name="author">
-        
-        <label for="editBookDescription">Description:</label>
-        <textarea id="editBookDescription" name="description" rows="5"></textarea>
-        
-        <button type="submit" class="save-btn">💾 Save Changes</button>
+        <!-- store OLID -->
+        <input type="hidden" id="editBookOlid">
+
+        <!-- Page input -->
+        <label id="currentPageLabel">Current Page:</label>
+        <input type="number" id="editBookProgress" min="0">
+
+        <button type="submit" class="btn-primary">Save</button>
+        <button type="button" id="resetProgressBtn" class="btn-secondary">Reset</button>
       </form>
     </div>
   </div>
 
   <!-- JS -->
-  <script type="module" src="{% static 'js/dashboard.js' %}?v=11"></script>
+  <script type="module" src="{% static 'js/dashboard.js' %}?v=29"></script>
 </body>
 </html>
 

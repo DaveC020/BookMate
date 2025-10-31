@@ -968,6 +968,11 @@ h3::before {
   -webkit-text-fill-color: transparent;
 }
 
+#editBookModal {
+  display: none;
+}
+
+
 #editBookForm {
   display: flex;
   flex-direction: column;

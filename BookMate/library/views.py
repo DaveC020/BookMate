@@ -178,14 +178,48 @@ def search_books(request):
 
     results = []
     for book in data.get("docs", [])[:10]:
-        olid = book.get("cover_edition_key") or (book.get("edition_key")[0] if book.get("edition_key") else None)
+        olid = book.get("cover_edition_key") or (
+            book.get("edition_key")[0] if book.get("edition_key") else None
+        )
         cover_url = f"https://covers.openlibrary.org/b/olid/{olid}-M.jpg" if olid else None
+
+        number_of_pages = None
+
+        if olid:
+            # ✅ 1) Try Books API jscmd=data (best source)
+            try:
+                api_url = f"https://openlibrary.org/api/books?bibkeys=OLID:{olid}&jscmd=data&format=json"
+                api_resp = requests.get(api_url)
+                api_data = api_resp.json().get(f"OLID:{olid}", {})
+
+                number_of_pages = api_data.get("number_of_pages")
+            except Exception:
+                pass
+
+            # ✅ 2) Edition fallback if still none
+            if not number_of_pages:
+                try:
+                    edition_url = f"https://openlibrary.org/books/{olid}.json"
+                    edition_resp = requests.get(edition_url)
+                    edition_data = edition_resp.json()
+
+                    number_of_pages = edition_data.get("number_of_pages")
+
+                    # Fallback: parse from pagination text
+                    if not number_of_pages and edition_data.get("pagination"):
+                        import re
+                        digits = re.findall(r"\d+", edition_data["pagination"])
+                        if digits:
+                            number_of_pages = int(digits[-1])
+                except Exception:
+                    number_of_pages = None
 
         results.append({
             "title": book.get("title"),
             "author": ", ".join(book.get("author_name", [])) if book.get("author_name") else "Unknown",
             "cover_url": cover_url,
             "olid": olid,
+            "pages": number_of_pages or 0,  # ✅ always return a number
         })
 
     return JsonResponse({"results": results})
@@ -207,14 +241,55 @@ def add_book(request):
         if not olid:
             return JsonResponse({"message": "Missing book ID (OLID)."}, status=400)
 
+        pages = data.get("pages")  # may be None from frontend
+
+        # ✅ If pages not provided by search API, fetch from Open Library
+        if not pages:
+            pages = None
+
+            # 1) Try jscmd=data API
+            try:
+                api_url = f"https://openlibrary.org/api/books?bibkeys=OLID:{olid}&jscmd=data&format=json"
+                api_resp = requests.get(api_url)
+                api_data = api_resp.json().get(f"OLID:{olid}", {})
+
+                pages = api_data.get("number_of_pages")
+            except Exception:
+                pass
+
+            # 2) Try edition JSON fallback
+            if not pages:
+                try:
+                    edition_url = f"https://openlibrary.org/books/{olid}.json"
+                    edition_resp = requests.get(edition_url)
+                    edition_data = edition_resp.json()
+
+                    pages = edition_data.get("number_of_pages")
+
+                    # parse pagination if needed
+                    if not pages and edition_data.get("pagination"):
+                        import re
+                        digits = re.findall(r"\d+", edition_data["pagination"])
+                        if digits:
+                            pages = int(digits[-1])
+                except Exception:
+                    pages = None
+
+        # ✅ Create or get book
         book, created = UserBookList.objects.get_or_create(
             user=request.user,
             olid=olid,
-            defaults={"title": title, "author": author, "cover_url": cover_url},
+            defaults={
+                "title": title,
+                "author": author,
+                "cover_url": cover_url,
+                "pages": pages or 0,  # always store something
+            },
         )
 
         if not created:
             return JsonResponse({"message": "Book already in your list!"})
+
         return JsonResponse({"message": "Book added successfully!"})
 
 # --- REMOVE BOOK FROM USER LIST ---
@@ -240,46 +315,26 @@ def remove_book(request):
 
 # --- EDIT BOOK DETAILS ---
 @csrf_exempt
-def edit_book(request):
+def update_progress(request):
     if request.method == "POST":
         data = json.loads(request.body)
         olid = data.get("olid")
-        title = data.get("title")
-        author = data.get("author")
-        description = data.get("description")
+        progress = data.get("progress")
 
-        if not olid:
-            return JsonResponse({"success": False, "message": "No OLID provided"}, status=400)
-        
-        if not title:
-            return JsonResponse({"success": False, "message": "Title is required"}, status=400)
+        if not request.user.is_authenticated:
+            return JsonResponse({"success": False, "message": "Not logged in"}, status=403)
 
         try:
-            # Update the book belonging to this user
             book = UserBookList.objects.get(user=request.user, olid=olid)
-            book.title = title
-            book.author = author or ""
-            book.description = description or ""
+            book.current_page = int(progress)
             book.save()
-
-            return JsonResponse({
-                "success": True,
-                "message": "Book details updated successfully!",
-                "book": {
-                    "olid": book.olid,
-                    "title": book.title,
-                    "author": book.author,
-                    "description": book.description
-                }
-            })
+            return JsonResponse({"success": True, "progress": book.current_page})
         except UserBookList.DoesNotExist:
             return JsonResponse({"success": False, "message": "Book not found"}, status=404)
-        except Exception as e:
-            return JsonResponse({"success": False, "message": str(e)}, status=500)
 
     return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
 
-
+#Toggle
 @csrf_exempt
 def toggle_favorite(request):
     if request.method == "POST":
@@ -313,14 +368,14 @@ def dashboard(request):
     user_books = UserBookList.objects.filter(user=request.user)
     return render(request, 'dashboard.html', {'user_books': user_books})
 
-def book_preview(request, olid):
-    book = get_object_or_404(UserBookList, olid=olid, user=request.user)
-    return render(request, 'book_preview.html', {'book': book})
+# def book_preview(request, olid):
+#     book = get_object_or_404(UserBookList, olid=olid, user=request.user)
+#     return render(request, 'book_preview.html', {'book': book})
 
 
 #BOOK PREVIEW API FETCH
 def book_preview(request, olid):
-    # --- ✅ Check cache first ---
+    # --- Check cache first ---
     cache_key = f"book_data_{olid}"
     cached_data = cache.get(cache_key)
 
@@ -330,7 +385,7 @@ def book_preview(request, olid):
 
     print(f"🌐 Cache miss for {olid}, fetching from API...")
 
-    # --- Fetch from Open Library ---
+    # --- Fetch from Open Library Works ---
     work_url = f"https://openlibrary.org/works/{olid}.json"
     work_response = requests.get(work_url)
 
@@ -347,13 +402,14 @@ def book_preview(request, olid):
                 "description": "No data available.",
                 "cover_url": user_book.cover_url if user_book else None,
                 "olid": olid,
+                "pages": user_book.pages if user_book else 0,
             }
             cache.set(cache_key, data, timeout=3600)
             return render(request, "book_preview.html", data)
     else:
         data = work_response.json()
 
-    # --- Process data ---
+    # --- Extract fields ---
     title = data.get("title", "Unknown Title")
 
     # ✅ Description
@@ -397,16 +453,52 @@ def book_preview(request, olid):
         if user_book and user_book.cover_url:
             cover_url = user_book.cover_url
 
-    # ✅ Context (for rendering + caching)
+    # ✅ ✅ ✅ PAGES FETCHING
+
+    pages = None
+
+    # 1) Try Books API jscmd=data (most reliable)
+    try:
+        api_url = f"https://openlibrary.org/api/books?bibkeys=OLID:{olid}&jscmd=data&format=json"
+        api_resp = requests.get(api_url)
+        if api_resp.status_code == 200:
+            api_data = api_resp.json().get(f"OLID:{olid}", {})
+            pages = api_data.get("number_of_pages")
+    except:
+        pass
+
+    # 2) Try edition JSON (fallback)
+    if not pages:
+        try:
+            edition_url = f"https://openlibrary.org/books/{olid}.json"
+            edition_resp = requests.get(edition_url)
+            if edition_resp.status_code == 200:
+                edition_data = edition_resp.json()
+                pages = edition_data.get("number_of_pages")
+
+                # Fallback from pagination (e.g. "350 pages")
+                if not pages and edition_data.get("pagination"):
+                    import re
+                    digits = re.findall(r"\d+", edition_data["pagination"])
+                    if digits:
+                        pages = int(digits[-1])
+        except:
+            pass
+
+    # 3) DB fallback
+    if not pages:
+        user_book = UserBookList.objects.filter(user=request.user, olid=olid).first()
+        pages = user_book.pages if user_book else 0
+
+    # ✅ Prepare context
     context = {
         "title": title,
         "authors": authors,
         "description": description,
         "cover_url": cover_url,
         "olid": olid,
+        "pages": pages or 0,
     }
 
-    # --- ✅ Save to cache for 1 hour (3600s) ---
     cache.set(cache_key, context, timeout=3600)
-
     return render(request, "book_preview.html", context)
