@@ -92,12 +92,26 @@
     </div>
     <div class="book-grid" id="user-books">
       {% for book in user_books %}
-      <div class="book-card" data-olid="{{ book.olid }}" data-title="{{ book.title }}" data-author="{{ book.author|default:'' }}" data-pages="{{ book.pages }}">
+      <div class="book-card" data-olid="{{ book.olid }}" data-title="{{ book.title }}" data-author="{{ book.author|default:'' }}" data-pages="{{ book.pages }}" data-page="{{ book.current_page }}">
         <a href="{% url 'book_preview' book.olid %}" class="book-card-link">
           <img src="{{ book.cover_url }}" alt="{{ book.title }} cover" class="book-cover">
           <p class="book-title">{{ book.title }}</p>
           <p class="book-author">{{ book.author }}</p>
         </a>
+        
+        <!-- Reading Progress Bar -->
+        <div class="reading-progress-container">
+          <div class="progress-info">
+            <span class="progress-text" data-progress-text>Page {{ book.current_page }} of {{ book.pages }}</span>
+            <span class="progress-percentage">{% widthratio book.current_page book.pages 100 %}%</span>
+          </div>
+          <div class="progress-bar-wrapper">
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill" style="width: {% widthratio book.current_page book.pages 100 %}%;" data-progress-bar></div>
+            </div>
+          </div>
+        </div>
+        
         <!-- Favorite, Edit and Remove Buttons -->
         <div class="book-actions">
           <button class="favorite-btn {% if book.is_favorite %}favorited{% endif %}" data-olid="{{ book.olid }}" title="{% if book.is_favorite %}Remove from favorites{% else %}Add to favorites{% endif %}">
@@ -143,17 +157,49 @@
       <span class="close-modal">&times;</span>
 
       <h2>Update Reading Progress</h2>
+      <p class="modal-subtitle">Track your reading journey with precision</p>
 
       <form id="editBookForm">
         <!-- store OLID -->
         <input type="hidden" id="editBookOlid">
 
-        <!-- Page input -->
-        <label id="currentPageLabel">Current Page:</label>
-        <input type="number" id="editBookProgress" min="0">
+        <!-- Progress Information Card -->
+        <div class="progress-info-card">
+          <label class="form-label">Current Progress</label>
+          <p id="currentPageLabel" class="progress-display">Current Page: 0 of 0 — 0%</p>
+        </div>
 
-        <button type="submit" class="btn-primary">Save</button>
-        <button type="button" id="resetProgressBtn" class="btn-secondary">Reset</button>
+        <!-- Page Input Group -->
+        <div class="form-group">
+          <label for="editBookProgress" class="form-label">
+            <span class="label-icon">📄</span>
+            Enter Page Number
+          </label>
+          <input 
+            type="number" 
+            id="editBookProgress" 
+            min="0" 
+            placeholder="Enter current page..."
+            class="form-input"
+          >
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="modal-actions">
+          <button type="submit" class="btn-save">
+            <span class="btn-icon">✓</span>
+            Save Progress
+          </button>
+          <button type="button" id="resetProgressBtn" class="btn-reset">
+            <span class="btn-icon">↻</span>
+            Reset to Beginning
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+          </button>
+        </div>
       </form>
     </div>
   </div>
