@@ -53,7 +53,7 @@ export function createBookCard(book) {
   const card = document.createElement("div");
   card.className = "book-card";
 
-  // ✅ Match CSS classes — no inline styles
+  // Match CSS classes — no inline styles
   const coverHTML = book.cover_url
     ? `<img src="${book.cover_url}" alt="${book.title}" class="book-cover">`
     : `<div class="no-cover">No Cover</div>`;
@@ -76,7 +76,7 @@ export function createBookCard(book) {
 }
 
 
-// ➕ Add “Add to List” button handlers
+// Add “Add to List” button handlers
 export function attachAddButtonHandlers() {
   document.querySelectorAll(".add-btn").forEach(btn => {
     btn.addEventListener("click", async () => {
@@ -104,6 +104,45 @@ export function attachAddButtonHandlers() {
 
 
 // Add a book card to user bookshelf UI
+// export function addBookToUserList(payload) {
+//   const userBooksGrid = document.getElementById("user-books");
+//   if (!userBooksGrid) return;
+
+//   const existing = userBooksGrid.querySelector(`[data-olid="${payload.olid}"]`);
+//   if (existing) return;
+
+//   const newCard = document.createElement("div");
+//   newCard.className = "book-card";
+//   newCard.setAttribute("data-olid", payload.olid);
+//   newCard.setAttribute("data-title", payload.title);
+//   newCard.setAttribute("data-author", payload.author || "");
+//   newCard.setAttribute("data-pages", payload.pages || 0);
+
+//   newCard.innerHTML = `
+//     <a href="/book/${payload.olid}" class="book-card-link">
+//       <img src="${payload.cover_url || ""}" alt="${payload.title} cover" class="book-cover">
+//       <p class="book-title">${payload.title}</p>
+//       <p class="book-author">${payload.author || "Unknown"}</p>
+//     </a>
+//     <div class="book-actions">
+//       <button class="favorite-btn" data-olid="${payload.olid}">
+//         <span class="star-icon">☆</span>
+//       </button>
+
+//       <button class="edit-btn"
+//         data-olid="${payload.olid}"
+//         data-page="${payload.current_page || 0}"
+//         data-pages="${payload.pages || 0}">
+//         Edit
+//       </button>
+
+//       <button class="remove-btn" data-olid="${payload.olid}">❌ Remove</button>
+//     </div>
+//   `;
+//   userBooksGrid.appendChild(newCard);
+
+// }
+
 export function addBookToUserList(payload) {
   const userBooksGrid = document.getElementById("user-books");
   if (!userBooksGrid) return;
@@ -116,6 +155,8 @@ export function addBookToUserList(payload) {
   newCard.setAttribute("data-olid", payload.olid);
   newCard.setAttribute("data-title", payload.title);
   newCard.setAttribute("data-author", payload.author || "");
+  // store page on card dataset so sorting/filtering can use it
+  newCard.setAttribute("data-page", payload.current_page || 0);
   newCard.setAttribute("data-pages", payload.pages || 0);
 
   newCard.innerHTML = `
@@ -124,6 +165,7 @@ export function addBookToUserList(payload) {
       <p class="book-title">${payload.title}</p>
       <p class="book-author">${payload.author || "Unknown"}</p>
     </a>
+
     <div class="book-actions">
       <button class="favorite-btn" data-olid="${payload.olid}">
         <span class="star-icon">☆</span>
@@ -140,16 +182,11 @@ export function addBookToUserList(payload) {
     </div>
   `;
 
+
   userBooksGrid.appendChild(newCard);
 
-  // ✅ Make this new edit button work immediately with the SAME modal logic
-  const editBtn = newCard.querySelector(".edit-btn");
-  editBtn.addEventListener("click", () => {
-    const event = new CustomEvent("click", { bubbles: true });
-    editBtn.dispatchEvent(event);
-  });
+  // NO local edit click handler here — rely on delegated handler in dashboard.js
 }
-
 
 
 // Handle removal from DOM

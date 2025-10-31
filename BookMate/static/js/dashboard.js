@@ -238,7 +238,6 @@ function initRemoveHandler() {
 
 // Flag to prevent multiple initializations
 let editHandlerInitialized = false;
-
 function initEditHandler() {
   if (editHandlerInitialized) return;
   editHandlerInitialized = true;
@@ -246,124 +245,134 @@ function initEditHandler() {
   const modal = document.getElementById("editBookModal");
   const form = document.getElementById("editBookForm");
   const closeBtn = document.querySelector(".close-modal");
-
-  // Close when clicking X
-  closeBtn.addEventListener("click", () => {
-    modal.style.display = "none";
-  });
-
-  // Close on background click
-  modal.addEventListener("click", (e) => {
-    if (e.target === modal) modal.style.display = "none";
-  });
-
-  // Open modal
-  document.addEventListener("click", (event) => {
-  if (!event.target.classList.contains("edit-btn")) return;
-
-  const olid = event.target.dataset.olid;
-  const currentPage = event.target.dataset.page || 0;
-  const totalPages = event.target.dataset.pages || 0;
-  const percent = totalPages > 0 ? Math.round((currentPage / totalPages) * 100) : 0;
-
-  // Fill modal fields
-  document.getElementById("editBookOlid").value = olid;
-  document.getElementById("editBookProgress").value = currentPage;
-
-  // ✅ Update label to show "Current Page (34 of 300)"
-  const label = document.getElementById("currentPageLabel");
-  label.textContent = `Current Page (${currentPage} of ${totalPages}) — ${percent}%`;
-
-  modal.style.display = "flex";
-});
-
-
-  // Close modal on background click
-  modal.addEventListener("click", (e) => {
-    if (e.target === modal) modal.style.display = "none";
-  });
-
-  // Submit handler
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const olid = document.getElementById("editBookOlid").value;
-    const progress = document.getElementById("editBookProgress").value;
-
-    const res = await fetch("/api/update_progress/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": getCookie("csrftoken")
-      },
-      body: JSON.stringify({ olid, progress })
-    });
-
-    const data = await res.json();
-
-    if (!data.success) {
-      showError("Failed to update progress");
-      return;
-    }
-
-    // Update UI
-    const card = document.querySelector(`.book-card[data-olid="${olid}"]`);
-    const btn = card?.querySelector(".edit-btn");
-    if (btn) btn.dataset.page = progress;
-
-    showSuccess("Reading progress updated!");
-    modal.style.display = "none";
-  });
-
-  // Live update progress percentage when typing
-  document.getElementById("editBookProgress").addEventListener("input", function() {
-    const currentPage = parseInt(this.value) || 0;
-    const totalPages = parseInt(document.querySelector(`.edit-btn[data-olid="${document.getElementById("editBookOlid").value}"]`)?.dataset.pages) || 0;
-    const percent = totalPages > 0 ? Math.round((currentPage / totalPages) * 100) : 0;
-
-    document.getElementById("currentPageLabel").textContent =
-      `Current Page (${currentPage} of ${totalPages}) — ${percent}%`;
-  });
-
-  // Reset handler
+  const progressInput = document.getElementById("editBookProgress");
+  const olidInput = document.getElementById("editBookOlid");
+  const currentPageLabel = document.getElementById("currentPageLabel");
   const resetBtn = document.getElementById("resetProgressBtn");
 
-  resetBtn.addEventListener("click", async () => {
-    const olid = document.getElementById("editBookOlid").value;
+  if (!modal || !form || !closeBtn || !progressInput || !olidInput || !currentPageLabel || !resetBtn) {
+    console.error("Edit modal not fully loaded");
+    return;
+  }
 
-    const res = await fetch("/api/update_progress/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": getCookie("csrftoken")
-      },
-      body: JSON.stringify({ olid, progress: 0 })
-    });
+  closeBtn.addEventListener("click", () => modal.style.display = "none");
 
-    const data = await res.json();
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) modal.style.display = "none";
+  });
 
-    if (data.success) {
-      // Update UI button attribute
-      const card = document.querySelector(`.book-card[data-olid="${olid}"]`);
+  document.addEventListener("click", (event) => {
+    const editBtn = event.target.closest(".edit-btn");
+    if (!editBtn) return;
+
+    const olid = String(editBtn.dataset.olid || "");
+    const currentPage = Number(editBtn.dataset.page || 0);
+    const totalPages = Number(editBtn.dataset.pages || 0);
+    const percent = totalPages > 0 ? Math.round((currentPage / totalPages) * 100) : 0;
+
+    olidInput.value = olid;
+    progressInput.value = currentPage;
+
+    currentPageLabel.textContent = `Current Page (${currentPage} of ${totalPages}) — ${percent}%`;
+
+    modal.style.display = "flex";
+  });
+
+  progressInput.addEventListener("input", function () {
+    const currentPage = Number(this.value) || 0;
+    const olid = olidInput.value;
+    const pages = Number(document.querySelector(`.edit-btn[data-olid="${olid}"]`)?.dataset.pages) || 0;
+    const percent = pages > 0 ? Math.round((currentPage / pages) * 100) : 0;
+    currentPageLabel.textContent = `Current Page (${currentPage} of ${pages}) — ${percent}%`;
+  });
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const olid = String(olidInput.value || "");
+    const progress = Number(progressInput.value || 0);
+
+    try {
+      const res = await fetch("/api/update_progress/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": getCookie("csrftoken"),
+        },
+        body: JSON.stringify({ olid, progress }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        showError(data.message || "Failed to update progress");
+        return;
+      }
+
+      // ✅ Only update card in USER BOOKSHELF
+      const card = document.querySelector(`#user-books .book-card[data-olid="${CSS.escape(olid)}"]`);
       const btn = card?.querySelector(".edit-btn");
-      const totalPages = parseInt(btn?.dataset.pages) || 0;
 
-      if (btn) btn.dataset.page = 0;
+      if (btn) btn.dataset.page = String(progress);
+      if (card) card.dataset.page = String(progress);
 
-      // Reset modal UI
-      document.getElementById("editBookProgress").value = 0;
-      document.getElementById("currentPageLabel").textContent =
-        `Current Page (0 of ${totalPages}) — 0%`;
+      // ✅ Update visible text if exists
+      const progressEl = card?.querySelector("[data-progress-text]");
+      if (progressEl) {
+        const totalPages = Number(btn?.dataset.pages) || 0;
+        progressEl.textContent = `Page ${progress} of ${totalPages}`;
+      }
 
-      showSuccess("Progress reset to 0");
-    } else {
-      showError("Failed to reset progress");
+      showSuccess("Reading progress updated!");
+      modal.style.display = "none";
+    } catch (err) {
+      showError("Something went wrong");
+      console.error(err);
+    }
+  });
+
+  resetBtn.addEventListener("click", async () => {
+    const olid = String(olidInput.value || "");
+    if (!olid) return showWarning("Missing ID");
+
+    try {
+      const res = await fetch("/api/update_progress/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": getCookie("csrftoken"),
+        },
+        body: JSON.stringify({ olid, progress: 0 }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        showError(data.message || "Failed to reset");
+        return;
+      }
+
+      const card = document.querySelector(`#user-books .book-card[data-olid="${CSS.escape(olid)}"]`);
+      const btn = card?.querySelector(".edit-btn");
+
+      if (btn) btn.dataset.page = "0";
+      if (card) card.dataset.page = "0";
+
+      const progressEl = card?.querySelector("[data-progress-text]");
+      if (progressEl) {
+        const totalPages = Number(btn?.dataset.pages) || 0;
+        progressEl.textContent = `Page 0 of ${totalPages}`;
+      }
+
+      progressInput.value = 0;
+      currentPageLabel.textContent = `Current Page (0 of ${btn?.dataset.pages || 0}) — 0%`;
+      showSuccess("Progress reset");
+    } catch (err) {
+      showError("Failed to reset");
+      console.error(err);
     }
   });
 }
 
 
-// Helper function to get CSRF token
+//Helper function to get CSRF token
 function getCookie(name) {
   let cookieValue = null;
   if (document.cookie && document.cookie !== "") {

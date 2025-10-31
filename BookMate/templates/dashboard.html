@@ -27,7 +27,7 @@
         </div>
       </div>
 
-      <!-- 🔍 Search Bar -->
+      <!-- Search Bar -->
       <div class="search-bar">
         <input id="searchInput" type="text" placeholder="Search books...">
         <button id="searchButton" type="button">🔍</button>
@@ -51,25 +51,25 @@
         <span class="bar"></span>
       </button>
       <div class="dropdown-menu" id="dropdownMenu">
-        <a href="#">👥 Community</a>
+        <a href="#">Community</a>
         <a href="{% url 'profile' %}">👤 Profile</a>
         <a href="{% url 'logout' %}" class="logout-link">🚪 Logout</a>
       </div>
     </div>
   </header>
 
-  <!-- 👋 Welcome Section -->
+  <!-- Welcome Section -->
   <section class="welcome" id="welcome-section">
     <h2>Welcome back, {{ user.username }}!</h2>
   </section>
 
-  <!-- 🔍 Search Results -->
+  <!-- Search Results -->
   <section id="search-results" style="display: none;">
     <h3>Search Results</h3>
     <div class="book-grid" id="results-grid"></div>
   </section>
 
-  <!-- 📚 User's Book List -->
+  <!-- User's Book List -->
   <section class="currently-reading">
     <div class="section-header">
       <h3>Currently Reading</h3>
@@ -118,7 +118,7 @@
     </div>
   </section>
 
-  <!-- 💡 Recommendations -->
+  <!-- Recommendations -->
   <section class="recommendations">
     <h3>Recommendations</h3>
     <div class="book-grid">
@@ -159,7 +159,7 @@
   </div>
 
   <!-- JS -->
-  <script type="module" src="{% static 'js/dashboard.js' %}?v=29"></script>
+  <script type="module" src="{% static 'js/dashboard.js' %}?v=39"></script>
 </body>
 </html>
 
