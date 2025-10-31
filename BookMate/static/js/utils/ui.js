@@ -2,7 +2,7 @@
 import { addBook } from "./api.js";
 import { showSuccess, showError, showBookNotification } from "./notifications.js";
 
-// 🔄 Toggle between welcome and search results sections
+// Toggle between welcome and search results sections
 export function toggleSections(mode) {
   const welcomeSection = document.getElementById("welcome-section");
   const searchResultsSection = document.getElementById("search-results");
@@ -11,7 +11,7 @@ export function toggleSections(mode) {
   if (searchResultsSection) searchResultsSection.style.display = mode === "search" ? "block" : "none";
 }
 
-// 🧾 Render search results
+// Render search results
 export function renderSearchResults(data, query) {
   const resultsGrid = document.getElementById("results-grid");
   resultsGrid.innerHTML = "";
@@ -35,9 +35,11 @@ export function renderSearchResults(data, query) {
         data-olid="${book.olid}"
         data-title="${book.title}"
         data-author="${book.author || ''}"
-        data-cover="${book.cover_url || ''}">
+        data-cover="${book.cover_url || ''}"
+        data-pages="${book.pages || 0}">
         ➕ Add to List
       </button>
+
     `;
     resultsGrid.appendChild(card);
   });
@@ -46,10 +48,7 @@ export function renderSearchResults(data, query) {
   attachAddButtonHandlers();
 }
 
-
-
-
-// 📚 Create a single book card
+// Create a single book card
 export function createBookCard(book) {
   const card = document.createElement("div");
   card.className = "book-card";
@@ -67,7 +66,8 @@ export function createBookCard(book) {
       data-olid="${book.olid}"
       data-title="${book.title}"
       data-author="${book.author || ''}"
-      data-cover="${book.cover_url || ''}">
+      data-cover="${book.cover_url || ''}"
+      data-pages="${book.pages || 0}">
       ➕ Add to List
     </button>
   `;
@@ -85,6 +85,7 @@ export function attachAddButtonHandlers() {
         author: btn.dataset.author,
         cover_url: btn.dataset.cover,
         olid: btn.dataset.olid,
+        pages: btn.dataset.pages ? parseInt(btn.dataset.pages) : null
       };
 
       console.log("Adding book:", payload);
@@ -101,12 +102,12 @@ export function attachAddButtonHandlers() {
   });
 }
 
-// 📖 Add a book to the user’s list in the DOM
+
+// Add a book card to user bookshelf UI
 export function addBookToUserList(payload) {
   const userBooksGrid = document.getElementById("user-books");
   if (!userBooksGrid) return;
 
-  // Avoid duplicates
   const existing = userBooksGrid.querySelector(`[data-olid="${payload.olid}"]`);
   if (existing) return;
 
@@ -115,7 +116,7 @@ export function addBookToUserList(payload) {
   newCard.setAttribute("data-olid", payload.olid);
   newCard.setAttribute("data-title", payload.title);
   newCard.setAttribute("data-author", payload.author || "");
-  newCard.setAttribute("data-description", payload.description || "");
+  newCard.setAttribute("data-pages", payload.pages || 0);
 
   newCard.innerHTML = `
     <a href="/book/${payload.olid}" class="book-card-link">
@@ -124,25 +125,34 @@ export function addBookToUserList(payload) {
       <p class="book-author">${payload.author || "Unknown"}</p>
     </a>
     <div class="book-actions">
-      <button class="favorite-btn" data-olid="${payload.olid}" title="Add to favorites">
+      <button class="favorite-btn" data-olid="${payload.olid}">
         <span class="star-icon">☆</span>
       </button>
+
       <button class="edit-btn"
         data-olid="${payload.olid}"
-        data-title="${payload.title}"
-        data-author="${payload.author || ""}"
-        data-description="${payload.description || ""}">
-        ✏️ Edit
+        data-page="${payload.current_page || 0}"
+        data-pages="${payload.pages || 0}">
+        Edit
       </button>
+
       <button class="remove-btn" data-olid="${payload.olid}">❌ Remove</button>
     </div>
   `;
 
   userBooksGrid.appendChild(newCard);
+
+  // ✅ Make this new edit button work immediately with the SAME modal logic
+  const editBtn = newCard.querySelector(".edit-btn");
+  editBtn.addEventListener("click", () => {
+    const event = new CustomEvent("click", { bubbles: true });
+    editBtn.dispatchEvent(event);
+  });
 }
 
 
-// ❌ Handle removal from DOM
+
+// Handle removal from DOM
 export function handleBookRemoval(removeBtn) {
   const bookCard = removeBtn.closest(".book-card");
   if (bookCard) bookCard.remove();
