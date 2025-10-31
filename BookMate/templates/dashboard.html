@@ -103,11 +103,11 @@
         <div class="reading-progress-container">
           <div class="progress-info">
             <span class="progress-text" data-progress-text>Page {{ book.current_page }} of {{ book.pages }}</span>
-            <span class="progress-percentage">{% widthratio book.current_page book.pages 100 %}%</span>
+            <span class="progress-percentage">{% if book.pages %}{% widthratio book.current_page book.pages 100 %}{% else %}0{% endif %}%</span>
           </div>
           <div class="progress-bar-wrapper">
             <div class="progress-bar-bg">
-              <div class="progress-bar-fill" style="width: {% widthratio book.current_page book.pages 100 %}%;" data-progress-bar></div>
+              <div class="progress-bar-fill" data-progress-bar data-current="{{ book.current_page }}" data-total="{{ book.pages }}"></div>
             </div>
           </div>
         </div>

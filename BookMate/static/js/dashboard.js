@@ -18,7 +18,21 @@ document.addEventListener("DOMContentLoaded", () => {
   initFilterHandler();
   initSortHandler();
   restoreSearchFromURL();
+  initProgressBars();
 });
+
+// Initialize progress bars on page load
+function initProgressBars() {
+  const progressBars = document.querySelectorAll('[data-progress-bar]');
+  
+  progressBars.forEach(bar => {
+    const current = Number(bar.dataset.current) || 0;
+    const total = Number(bar.dataset.total) || 0;
+    const percent = total > 0 ? Math.round((current / total) * 100) : 0;
+    
+    bar.style.width = `${percent}%`;
+  });
+}
 
 function initSearchHandler() {
   const searchBtn = document.getElementById("searchButton");
