@@ -18,7 +18,21 @@ document.addEventListener("DOMContentLoaded", () => {
   initFilterHandler();
   initSortHandler();
   restoreSearchFromURL();
+  initProgressBars();
 });
+
+// Initialize progress bars on page load
+function initProgressBars() {
+  const progressBars = document.querySelectorAll('[data-progress-bar]');
+  
+  progressBars.forEach(bar => {
+    const current = Number(bar.dataset.current) || 0;
+    const total = Number(bar.dataset.total) || 0;
+    const percent = total > 0 ? Math.round((current / total) * 100) : 0;
+    
+    bar.style.width = `${percent}%`;
+  });
+}
 
 function initSearchHandler() {
   const searchBtn = document.getElementById("searchButton");
@@ -273,7 +287,7 @@ function initEditHandler() {
     olidInput.value = olid;
     progressInput.value = currentPage;
 
-    currentPageLabel.textContent = `Current Page (${currentPage} of ${totalPages}) — ${percent}%`;
+    currentPageLabel.textContent = `Page ${currentPage} of ${totalPages} — ${percent}% Complete`;
 
     modal.style.display = "flex";
   });
@@ -283,8 +297,14 @@ function initEditHandler() {
     const olid = olidInput.value;
     const pages = Number(document.querySelector(`.edit-btn[data-olid="${olid}"]`)?.dataset.pages) || 0;
     const percent = pages > 0 ? Math.round((currentPage / pages) * 100) : 0;
-    currentPageLabel.textContent = `Current Page (${currentPage} of ${pages}) — ${percent}%`;
+    currentPageLabel.textContent = `Page ${currentPage} of ${pages} — ${percent}% Complete`;
   });
+  //   const currentPage = Number(this.value) || 0;
+  //   const olid = olidInput.value;
+  //   const pages = Number(document.querySelector(`.edit-btn[data-olid="${olid}"]`)?.dataset.pages) || 0;
+  //   const percent = pages > 0 ? Math.round((currentPage / pages) * 100) : 0;
+  //   currentPageLabel.textContent = `Current Page (${currentPage} of ${pages}) — ${percent}%`;
+  // });
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -319,6 +339,28 @@ function initEditHandler() {
       if (progressEl) {
         const totalPages = Number(btn?.dataset.pages) || 0;
         progressEl.textContent = `Page ${progress} of ${totalPages}`;
+      }
+
+      // ✅ Update progress bar
+      const progressBar = card?.querySelector("[data-progress-bar]");
+      const progressPercentage = card?.querySelector(".progress-percentage");
+      if (progressBar && btn) {
+        const totalPages = Number(btn.dataset.pages) || 0;
+        const percent = totalPages > 0 ? Math.round((progress / totalPages) * 100) : 0;
+        
+        // Add updating animation class
+        progressBar.classList.add('updating');
+        
+        // Update width and percentage
+        progressBar.style.width = `${percent}%`;
+        if (progressPercentage) {
+          progressPercentage.textContent = `${percent}%`;
+        }
+        
+        // Remove animation class after animation completes
+        setTimeout(() => {
+          progressBar.classList.remove('updating');
+        }, 600);
       }
 
       showSuccess("Reading progress updated!");
@@ -361,8 +403,22 @@ function initEditHandler() {
         progressEl.textContent = `Page 0 of ${totalPages}`;
       }
 
+      // ✅ Update progress bar to 0%
+      const progressBar = card?.querySelector("[data-progress-bar]");
+      const progressPercentage = card?.querySelector(".progress-percentage");
+      if (progressBar) {
+        progressBar.classList.add('updating');
+        progressBar.style.width = '0%';
+        if (progressPercentage) {
+          progressPercentage.textContent = '0%';
+        }
+        setTimeout(() => {
+          progressBar.classList.remove('updating');
+        }, 600);
+      }
+
       progressInput.value = 0;
-      currentPageLabel.textContent = `Current Page (0 of ${btn?.dataset.pages || 0}) — 0%`;
+      currentPageLabel.textContent = `Page 0 of ${btn?.dataset.pages || 0} — 0% Complete`;
       showSuccess("Progress reset");
     } catch (err) {
       showError("Failed to reset");

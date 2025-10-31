@@ -650,6 +650,96 @@ h3::before {
   font-weight: 500;
 }
 
+/* Reading Progress Bar */
+.reading-progress-container {
+  width: 100%;
+  margin: 1rem 0 0.75rem 0;
+  padding: 0.75rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(245, 239, 230, 0.6) 100%);
+  border-radius: 10px;
+  border: 1px solid rgba(198, 163, 79, 0.2);
+  position: relative;
+  z-index: 2;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.progress-text {
+  color: #3B2B1C;
+  font-family: 'Georgia', 'Times New Roman', serif;
+}
+
+.progress-percentage {
+  color: #C6A34F;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.progress-bar-wrapper {
+  width: 100%;
+  position: relative;
+}
+
+.progress-bar-bg {
+  width: 100%;
+  height: 12px;
+  background: linear-gradient(135deg, #E8DCC8 0%, #D4C4B0 100%);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 
+    inset 0 2px 4px rgba(0, 0, 0, 0.1),
+    0 1px 2px rgba(255, 255, 255, 0.5);
+  position: relative;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(135deg, #C6A34F 0%, #A88939 100%);
+  border-radius: 20px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  box-shadow: 
+    0 2px 4px rgba(198, 163, 79, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Add a shine effect to the progress bar */
+.progress-bar-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), transparent);
+  border-radius: 20px 20px 0 0;
+}
+
+/* Animation when progress updates */
+@keyframes progressPulse {
+  0%, 100% {
+    box-shadow: 
+      0 2px 4px rgba(198, 163, 79, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+  50% {
+    box-shadow: 
+      0 4px 12px rgba(198, 163, 79, 0.6),
+      inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  }
+}
+
+.progress-bar-fill.updating {
+  animation: progressPulse 0.6s ease-out;
+}
+
 /* Button inside the card */
 .add-btn,
 .remove-btn {
@@ -913,32 +1003,35 @@ h3::before {
   top: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.65);
   display: flex;
   justify-content: center;
   align-items: center;
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(8px);
 }
 
 .modal-content {
   background: linear-gradient(135deg, #F5EFE6 0%, #E8DCC8 100%);
-  padding: 2rem;
+  padding: 2.5rem;
   border-radius: 20px;
   width: 90%;
-  max-width: 500px;
-  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+  max-width: 550px;
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(198, 163, 79, 0.3);
   position: relative;
-  animation: modalSlideIn 0.3s ease-out;
+  animation: modalSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 2px solid rgba(198, 163, 79, 0.4);
 }
 
 @keyframes modalSlideIn {
   from {
     opacity: 0;
-    transform: translateY(-50px);
+    transform: translateY(-50px) scale(0.95);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -951,61 +1044,207 @@ h3::before {
   color: #8B5A2B;
   cursor: pointer;
   transition: all 0.3s ease;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(139, 90, 43, 0.1);
 }
 
 .close-modal:hover {
   color: #C6A34F;
   transform: rotate(90deg);
+  background: rgba(198, 163, 79, 0.2);
 }
 
 .modal-content h2 {
   color: #3B2B1C;
-  margin-bottom: 1.5rem;
-  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+  font-size: 2rem;
   background: linear-gradient(135deg, #C6A34F 0%, #A88939 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.modal-subtitle {
+  color: #6B5843;
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+  font-style: italic;
+  opacity: 0.85;
 }
 
 #editBookModal {
   display: none;
 }
 
-
 #editBookForm {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
-#editBookForm label {
+/* Progress Information Card */
+.progress-info-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(245, 239, 230, 0.9) 100%);
+  border: 2px solid rgba(198, 163, 79, 0.3);
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: 
+    0 4px 15px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  margin-bottom: 0.5rem;
+}
+
+.progress-info-card .form-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #8B5A2B;
+  margin-bottom: 0.75rem;
+  display: block;
+}
+
+.progress-display {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #3B2B1C;
+  margin: 0;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  text-align: center;
+  padding: 0.5rem;
+  background: linear-gradient(135deg, rgba(198, 163, 79, 0.1) 0%, rgba(168, 137, 57, 0.1) 100%);
+  border-radius: 8px;
+  border: 1px solid rgba(198, 163, 79, 0.2);
+}
+
+/* Form Groups */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.form-label {
   font-weight: 600;
   color: #3B2B1C;
-  margin-bottom: 0.25rem;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  letter-spacing: 0.3px;
 }
 
-#editBookForm input,
-#editBookForm textarea {
-  padding: 0.75rem;
+.label-icon {
+  font-size: 1.1rem;
+  filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.form-input {
+  padding: 0.95rem 1.25rem;
   border: 2px solid rgba(198, 163, 79, 0.3);
-  border-radius: 8px;
-  font-size: 1rem;
+  border-radius: 10px;
+  font-size: 1.05rem;
   font-family: inherit;
   background: white;
   transition: all 0.3s ease;
+  color: #3B2B1C;
+  font-weight: 500;
 }
 
-#editBookForm input:focus,
-#editBookForm textarea:focus {
+.form-input:focus {
   outline: none;
   border-color: #C6A34F;
-  box-shadow: 0 0 0 3px rgba(198, 163, 79, 0.1);
+  box-shadow: 
+    0 0 0 3px rgba(198, 163, 79, 0.15),
+    0 2px 8px rgba(198, 163, 79, 0.2);
+  transform: translateY(-1px);
 }
 
-#editBookForm textarea {
-  resize: vertical;
-  min-height: 100px;
+.form-input::placeholder {
+  color: #A0826D;
+  opacity: 0.6;
+  font-style: italic;
+}
+
+/* Modal Action Buttons */
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.btn-save,
+.btn-reset {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-icon {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.btn-save {
+  background: linear-gradient(135deg, #4CAF50 0%, #45A049 100%);
+  color: white;
+  border: 2px solid rgba(76, 175, 80, 0.3);
+}
+
+.btn-save:hover {
+  background: linear-gradient(135deg, #45A049 0%, #3D8B40 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(76, 175, 80, 0.4);
+}
+
+.btn-save:active {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+.btn-reset {
+  background: linear-gradient(135deg, #9E9E9E 0%, #757575 100%);
+  color: white;
+  border: 2px solid rgba(158, 158, 158, 0.3);
+}
+
+.btn-reset:hover {
+  background: linear-gradient(135deg, #757575 0%, #616161 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(117, 117, 117, 0.4);
+}
+
+.btn-reset:active {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(117, 117, 117, 0.3);
+}
+
+/* Loading state for buttons */
+.btn-save:disabled,
+.btn-reset:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .save-btn {
@@ -1080,4 +1319,51 @@ h3::before {
     flex: 1;
     max-width: 200px;
   }
+
+  /* Modal responsive adjustments */
+  .modal-content {
+    width: 95%;
+    padding: 2rem 1.5rem;
+    max-width: 95%;
+  }
+
+  .modal-content h2 {
+    font-size: 1.6rem;
+  }
+
+  .modal-subtitle {
+    font-size: 0.85rem;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .btn-save,
+  .btn-reset {
+    width: 100%;
+  }
+
+  .progress-display {
+    font-size: 1.1rem;
+  }
+
+  /* Progress bar responsive adjustments */
+  .reading-progress-container {
+    padding: 0.6rem;
+  }
+
+  .progress-info {
+    font-size: 0.75rem;
+  }
+
+  .progress-percentage {
+    font-size: 0.8rem;
+  }
+
+  .progress-bar-bg {
+    height: 10px;
+  }
 }
+
