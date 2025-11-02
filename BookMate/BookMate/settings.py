@@ -31,7 +31,7 @@ SECRET_KEY = 'django-insecure-51n*xbsb__8g3m=9c_a0+hmd%pa^da$5xt^nperw35y4d=65f@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['bookmate-ya2p.onrender.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
