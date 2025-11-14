@@ -99,6 +99,42 @@
           <p class="book-author">{{ book.author }}</p>
         </a>
         
+        <!-- Genres and Tags Display -->
+        {% if book.genres or book.tags %}
+        <div class="book-metadata">
+          {% if book.genres %}
+            <div class="metadata-row">
+              {% for genre in book.get_genres_list %}
+                <span class="micro-genre-tag">{{ genre }}</span>
+              {% endfor %}
+            </div>
+          {% endif %}
+          {% if book.tags %}
+            <div class="metadata-row">
+              {% for tag in book.get_tags_list %}
+                <span class="micro-tag-badge">{{ tag }}</span>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+        {% endif %}
+        
+        <!-- Book Links -->
+        {% if book.read_online_link or book.buy_link %}
+        <div class="book-links">
+          {% if book.read_online_link %}
+            <a href="{{ book.read_online_link }}" target="_blank" class="book-link-btn read-online-btn" onclick="event.stopPropagation();">
+              📖 Read Online
+            </a>
+          {% endif %}
+          {% if book.buy_link %}
+            <a href="{{ book.buy_link }}" target="_blank" class="book-link-btn buy-btn" onclick="event.stopPropagation();">
+              🛒 Buy Book
+            </a>
+          {% endif %}
+        </div>
+        {% endif %}
+        
         <!-- Reading Progress Bar -->
         <div class="reading-progress-container">
           <div class="progress-info">
@@ -122,8 +158,18 @@
             data-olid="{{ book.olid }}" 
             data-page="{{ book.current_page }}"
             data-pages="{{ book.pages }}">
-            Edit</button>
+            📝 Progress</button>
           <button class="remove-btn" data-olid="{{ book.olid }}">❌ Remove</button>
+        </div>
+        
+        <!-- Book Links -->
+        <div class="book-links">
+          <a href="https://openlibrary.org/books/{{ book.olid }}" target="_blank" class="book-link-btn read-online-btn">
+            📖 Read Online
+          </a>
+          <a href="{% url 'buy_book_links' book.olid %}" class="book-link-btn buy-btn">
+            🛒 Buy Book
+          </a>
         </div>
       </div>
       {% empty %}
@@ -134,21 +180,45 @@
 
   <!-- Recommendations -->
   <section class="recommendations">
-    <h3>Recommendations</h3>
-    <div class="book-grid">
-      <div class="book-card">
-        <div class="book-cover"></div>
-        <p class="book-title">Book Title</p>
-        <p class="book-author">Author</p>
-        <p class="book-genre">Genre</p>
+    <h3>📚 Recommended For You</h3>
+    {% if recommended_books %}
+      <p class="recommendation-subtitle">
+        Based on your 
+        {% if user_favorite_genres %}
+          favorite genres: 
+          {% for genre in user_favorite_genres|slice:":3" %}
+            <span class="genre-badge">{{ genre }}</span>
+          {% endfor %}
+        {% endif %}
+        {% if user_tags %}
+          {% if user_favorite_genres %}and {% endif %}
+          tags: 
+          {% for tag in user_tags|slice:":3" %}
+            <span class="tag-badge">{{ tag }}</span>
+          {% endfor %}
+        {% endif %}
+      </p>
+      <div class="book-grid">
+        {% for book in recommended_books %}
+        <div class="book-card search-book-card" data-olid="{{ book.olid }}">
+          {% if book.cover_url %}
+            <img src="{{ book.cover_url }}" alt="{{ book.title }} cover" class="book-cover">
+          {% else %}
+            <div class="no-cover">📘</div>
+          {% endif %}
+          <p class="book-title">{{ book.title }}</p>
+          <p class="book-author">{{ book.author }}</p>
+          <p class="book-year">Published: {{ book.year }}</p>
+          <button class="add-btn" data-olid="{{ book.olid }}" data-title="{{ book.title }}" data-author="{{ book.author }}" data-cover="{{ book.cover_url }}">➕ Add to Library</button>
+        </div>
+        {% endfor %}
       </div>
-      <div class="book-card">
-        <div class="book-cover"></div>
-        <p class="book-title">Another Title</p>
-        <p class="book-author">Author</p>
-        <p class="book-genre">Genre</p>
-      </div>
-    </div>
+    {% else %}
+      <p class="no-recommendations">
+        No recommendations yet! Select your favorite genres to get personalized book suggestions.
+        <br><small><a href="{% url 'genre_setup' %}">Update your favorite genres</a></small>
+      </p>
+    {% endif %}
   </section>
 
 <!-- Edit Book Progress Modal -->
@@ -198,14 +268,9 @@
       </form>
     </div>
   </div>
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
 
   <!-- JS -->
-  <script type="module" src="{% static 'js/dashboard.js' %}?v=39"></script>
+  <script type="module" src="{% static 'js/dashboard.js' %}?v=40"></script>
 </body>
 </html>
 

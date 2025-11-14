@@ -49,74 +49,126 @@
     <!-- LEFT SIDEBAR -->
     <section class="profile-sidebar">
       <div class="user-info">
-        <img src="{% static 'images/user-placeholder.png' %}" alt="User Avatar" class="avatar">
-        <h2>{{ user.username }}</h2>
-        <p>{{ user.email }}</p>
-        <a href="{% url 'edit_profile' %}" class="edit-btn">Edit Profile</a>
-      </div>
-
-      <div class="genres">
-        <h3>Genres</h3>
-        <div class="tags">
-          <span>Fantasy</span>
-          <span>Romance</span>
-          <span>Mystery</span>
+        <div class="avatar-placeholder">
+          <span class="avatar-icon">👤</span>
         </div>
+        <h2>{{ user.username }}</h2>
+        <p class="user-email">{{ user.email }}</p>
+        <p class="user-joined">Joined {{ user.date_joined|date:"F Y" }}</p>
+        <a href="{% url 'edit_profile' %}" class="edit-btn">✏️ Edit Profile</a>
       </div>
 
-      <div class="bio">
-        <h3>Bio</h3>
-        <p>{{ user.profile.bio|default:"No bio added yet." }}</p>
+      {% if user_favorite_genres %}
+      <div class="genres">
+        <h3>📚 Favorite Genres</h3>
+        <div class="tags">
+          {% for genre in user_favorite_genres %}
+            <span class="genre-tag">{{ genre }}</span>
+          {% empty %}
+            <p class="no-data">No favorite genres selected.</p>
+          {% endfor %}
+        </div>
+        <a href="{% url 'genre_setup' %}" class="change-genres-link">Change genres</a>
       </div>
+      {% else %}
+      <div class="genres">
+        <h3>📚 Favorite Genres</h3>
+        <p class="no-data">Select your favorite genres to get personalized recommendations!</p>
+        <a href="{% url 'genre_setup' %}" class="add-genres-link">Select Genres</a>
+      </div>
+      {% endif %}
     </section>
 
     <!-- MAIN SECTION -->
     <section class="profile-main">
       <div class="reading-stats">
-        <h3>Reading Stats</h3>
+        <h3>📊 Reading Statistics</h3>
         <div class="stats-cards">
-          <div class="stat-card">Currently Reading</div>
-          <div class="stat-card">Finished Books</div>
-          <div class="stat-card">To-Read</div>
+          <div class="stat-card">
+            <div class="stat-number">{{ currently_reading }}</div>
+            <div class="stat-label">Currently Reading</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">{{ finished_books }}</div>
+            <div class="stat-label">Finished Books</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">{{ favorite_books_count }}</div>
+            <div class="stat-label">Favorite Books</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">{{ total_books }}</div>
+            <div class="stat-label">Total Books</div>
+          </div>
         </div>
       </div>
 
       <div class="bookshelves">
-        <h3>My Bookshelves</h3>
+        <h3>📖 My Bookshelves</h3>
 
         <div class="shelf">
           <h4>Currently Reading</h4>
+          {% for book in reading_books %}
           <div class="book-card">
-            <img src="{% static 'images/book-placeholder.png' %}" alt="Book Cover">
-            <div>
-              <p><strong>Book Title</strong></p>
-              <p>Author Name</p>
-              <p>Progress: 120 / 300 pages</p>
+            {% if book.cover_url %}
+              <img src="{{ book.cover_url }}" alt="{{ book.title }} cover">
+            {% else %}
+              <div class="no-cover-mini">📘</div>
+            {% endif %}
+            <div class="book-info">
+              <p><strong>{{ book.title }}</strong></p>
+              <p class="book-author-small">{{ book.author|default:"Unknown Author" }}</p>
+              <p class="book-progress">Progress: {{ book.current_page }} / {{ book.pages }} pages</p>
+              {% if book.pages > 0 %}
+                <div class="mini-progress-bar">
+                  <div class="mini-progress-fill" data-progress="{% widthratio book.current_page book.pages 100 %}"></div>
+                </div>
+              {% endif %}
             </div>
           </div>
+          {% empty %}
+            <p class="no-books">No books in progress yet. Start reading!</p>
+          {% endfor %}
         </div>
 
         <div class="shelf">
-          <h4>Finished Books</h4>
+          <h4>Recently Finished</h4>
+          {% for book in completed_books %}
           <div class="book-card">
-            <img src="{% static 'images/book-placeholder.png' %}" alt="Book Cover">
-            <div>
-              <p><strong>Book Title</strong></p>
-              <p>Author Name</p>
-              <p>Rating: ★★★★☆</p>
+            {% if book.cover_url %}
+              <img src="{{ book.cover_url }}" alt="{{ book.title }} cover">
+            {% else %}
+              <div class="no-cover-mini">📗</div>
+            {% endif %}
+            <div class="book-info">
+              <p><strong>{{ book.title }}</strong></p>
+              <p class="book-author-small">{{ book.author|default:"Unknown Author" }}</p>
+              <p class="book-completed">✅ Completed</p>
             </div>
           </div>
+          {% empty %}
+            <p class="no-books">No finished books yet. Keep reading!</p>
+          {% endfor %}
         </div>
 
         <div class="shelf">
-          <h4>To-Read List</h4>
+          <h4>⭐ Favorite Books</h4>
+          {% for book in favorite_books %}
           <div class="book-card">
-            <img src="{% static 'images/book-placeholder.png' %}" alt="Book Cover">
-            <div>
-              <p><strong>Book Title</strong></p>
-              <p>Author Name</p>
+            {% if book.cover_url %}
+              <img src="{{ book.cover_url }}" alt="{{ book.title }} cover">
+            {% else %}
+              <div class="no-cover-mini">⭐</div>
+            {% endif %}
+            <div class="book-info">
+              <p><strong>{{ book.title }}</strong></p>
+              <p class="book-author-small">{{ book.author|default:"Unknown Author" }}</p>
+              <p class="book-favorite">⭐ Favorited</p>
             </div>
           </div>
+          {% empty %}
+            <p class="no-books">No favorite books yet. Mark some books as favorites!</p>
+          {% endfor %}
         </div>
       </div>
     </section>
@@ -152,6 +204,18 @@
           });
         });
       }
+    });
+  </script>
+  
+  <script>
+    // Set progress bar widths from data attributes
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.mini-progress-fill').forEach(function(bar) {
+        const progress = bar.getAttribute('data-progress');
+        if (progress) {
+          bar.style.width = progress + '%';
+        }
+      });
     });
   </script>
 </body>

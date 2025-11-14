@@ -1,66 +1,316 @@
-body {
-  font-family: Arial, sans-serif;
-  background: #F4E1A1;
+* {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
-.genre-container {
-  max-width: 700px;
-  margin: 3rem auto;
-  padding: 2rem;
-  background: #D4B4A3;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-  text-align: center;
-}
-
-h1 {
-  color: #465C68;
-}
-
-p {
-  color: #4A2D33;
-}
-
-.genres {
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #F4E1A1 0%, #E8D49A 100%);
+  min-height: 100vh;
   display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
+  align-items: center;
   justify-content: center;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
 }
 
+/* Animated Background Elements */
+.background-animation {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.floating-book {
+  position: absolute;
+  font-size: 2.5rem;
+  opacity: 0.15;
+  animation: float 20s infinite ease-in-out;
+}
+
+.book-1 {
+  top: 10%;
+  left: 15%;
+  animation-delay: 0s;
+}
+
+.book-2 {
+  top: 60%;
+  left: 85%;
+  animation-delay: 3s;
+}
+
+.book-3 {
+  top: 80%;
+  left: 10%;
+  animation-delay: 6s;
+}
+
+.book-4 {
+  top: 30%;
+  left: 80%;
+  animation-delay: 9s;
+}
+
+.book-5 {
+  top: 50%;
+  left: 5%;
+  animation-delay: 12s;
+}
+
+.book-6 {
+  top: 20%;
+  left: 90%;
+  animation-delay: 15s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-30px) rotate(5deg);
+  }
+  50% {
+    transform: translateY(-60px) rotate(-5deg);
+  }
+  75% {
+    transform: translateY(-30px) rotate(3deg);
+  }
+}
+
+/* Main Container */
+.genre-container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 800px;
+  animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Card */
+.genre-card {
+  background: rgba(212, 180, 163, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 3rem 2.5rem;
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Title */
+.genre-title {
+  color: #465C68;
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.5px;
+}
+
+.genre-subtitle {
+  color: #4A2D33;
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  opacity: 0.9;
+}
+
+/* Genres Grid */
+.genres-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+/* Genre Option */
 .genre-option {
   position: relative;
-  padding: 0.8rem 1.2rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
   cursor: pointer;
-  background: #f9f5ec;
-  transition: 0.2s;
+  user-select: none;
 }
 
 .genre-option input[type="checkbox"] {
   position: absolute;
-  left: -9999px;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
 }
 
-.genre-option.selected {
-  background: #4A2D33;
+.genre-text {
+  display: block;
+  padding: 0.9rem 1rem;
+  background: rgba(249, 245, 236, 0.95);
+  border: 2px solid rgba(139, 90, 43, 0.2);
+  border-radius: 12px;
+  color: #3B2B1C;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.genre-option:hover .genre-text {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 20px rgba(74, 45, 51, 0.2);
+  border-color: rgba(139, 90, 43, 0.4);
+}
+
+/* Selected State */
+.genre-option input[type="checkbox"]:checked ~ .genre-text {
+  background: linear-gradient(135deg, #4A2D33 0%, #5A3D43 100%);
   color: white;
   border-color: #4A2D33;
+  box-shadow: 0 6px 20px rgba(74, 45, 51, 0.4);
+  transform: translateY(-2px) scale(1.02);
 }
 
-.btn-primary {
-  margin-top: 2rem;
-  padding: 0.8rem 1.5rem;
+.genre-option input[type="checkbox"]:checked ~ .genre-text::before {
+  content: '✓ ';
+  margin-right: 0.3rem;
+  font-weight: bold;
+}
+
+/* Continue Button */
+.btn-continue {
+  margin-top: 1.5rem;
+  padding: 1rem 3rem;
   border: none;
-  border-radius: 8px;
-  background: #465C68;
-  color: #fff;
+  border-radius: 50px;
+  background: linear-gradient(135deg, #B17073 0%, #9A5E61 100%);
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 700;
   cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba(177, 112, 115, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-.btn-primary:hover {
-  background: #B17073;
+.btn-continue:hover {
+  background: linear-gradient(135deg, #C28285 0%, #B17073 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(177, 112, 115, 0.5);
+}
+
+.btn-continue:active {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(177, 112, 115, 0.4);
+}
+
+.btn-continue:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  body {
+    padding: 1rem;
+  }
+
+  .genre-card {
+    padding: 2rem 1.5rem;
+  }
+
+  .genre-title {
+    font-size: 1.8rem;
+  }
+
+  .genre-subtitle {
+    font-size: 1rem;
+  }
+
+  .genres-grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.6rem;
+  }
+
+  .genre-text {
+    padding: 0.75rem 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  .btn-continue {
+    padding: 0.9rem 2.5rem;
+    font-size: 1rem;
+  }
+
+  .floating-book {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .genre-card {
+    padding: 1.5rem 1rem;
+  }
+
+  .genre-title {
+    font-size: 1.5rem;
+  }
+
+  .genres-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+
+  .genre-text {
+    padding: 0.7rem 0.6rem;
+    font-size: 0.8rem;
+  }
+
+  .btn-continue {
+    width: 100%;
+    padding: 0.85rem;
+    font-size: 0.95rem;
+  }
+}
+
+/* Selection Counter (Optional Feature) */
+.selection-counter {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #4A2D33;
+  opacity: 0.8;
+  font-weight: 600;
+}
+
+/* Focus States for Accessibility */
+.genre-option input[type="checkbox"]:focus ~ .genre-text {
+  outline: 3px solid rgba(74, 45, 51, 0.5);
+  outline-offset: 2px;
+}
+
+/* Smooth Transitions */
+* {
+  transition: all 0.3s ease;
+}
+
+input[type="checkbox"],
+button {
+  transition: all 0.2s ease;
 }

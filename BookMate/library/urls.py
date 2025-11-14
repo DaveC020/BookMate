@@ -9,6 +9,7 @@ urlpatterns = [
     path('genres/', views.genre_setup_view, name='genre_setup'),
     path('dashboard/', views.dashboard_view, name='dashboard'),  
     path('book/<str:olid>/', views.book_preview, name='book_preview'),
+    path('book/<str:olid>/buy/', views.buy_book_links, name='buy_book_links'),
     path('profile/', views.profile_view, name='profile'),
     path('edit_profile/', views.edit_profile_view, name='edit_profile'),
 
@@ -18,4 +19,6 @@ urlpatterns = [
     path('api/remove_book/', views.remove_book, name='remove_book'),
     path("api/update_progress/", views.update_progress, name="update_progress"),
     path('api/toggle_favorite/', views.toggle_favorite, name='toggle_favorite'),
+    path('api/update_tags/', views.update_tags, name='update_tags'),
+    path('api/get_user_tags/', views.get_user_tags, name='get_user_tags'),
 ]
