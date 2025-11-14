@@ -1,0 +1,272 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buy {{ title }} - BookMate</title>
+  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+  <link rel="stylesheet" href="{% static 'css/landing.css' %}">
+  <style>
+    .buy-links-container {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 2rem;
+    }
+
+    .book-header {
+      display: flex;
+      gap: 2rem;
+      align-items: flex-start;
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2rem;
+    }
+
+    .book-header img {
+      width: 150px;
+      height: 220px;
+      object-fit: cover;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .book-header-info h1 {
+      font-size: 1.8rem;
+      color: #3B2B1C;
+      margin-bottom: 0.5rem;
+    }
+
+    .book-header-info h2 {
+      font-size: 1.2rem;
+      color: #8B5A2B;
+      font-weight: normal;
+      margin-bottom: 1rem;
+    }
+
+    .bookstore-section {
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2rem;
+    }
+
+    .bookstore-section h3 {
+      font-size: 1.5rem;
+      color: #3B2B1C;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .bookstore-grid {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .bookstore-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem;
+      border: 2px solid #e9ecef;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      background: #f8f9fa;
+    }
+
+    .bookstore-card:hover {
+      border-color: #C6A34F;
+      box-shadow: 0 4px 15px rgba(198, 163, 79, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .bookstore-info h4 {
+      font-size: 1.2rem;
+      color: #3B2B1C;
+      margin-bottom: 0.3rem;
+    }
+
+    .bookstore-info p {
+      color: #6c757d;
+      font-size: 0.9rem;
+      margin: 0;
+    }
+
+    .currency-badge {
+      display: inline-block;
+      padding: 0.25rem 0.6rem;
+      background: linear-gradient(135deg, #C6A34F 0%, #A88939 100%);
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 12px;
+      margin-top: 0.5rem;
+    }
+
+    .visit-btn {
+      padding: 0.75rem 1.5rem;
+      background: linear-gradient(135deg, #C6A34F 0%, #A88939 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.3s ease;
+    }
+
+    .visit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(198, 163, 79, 0.4);
+    }
+
+    .back-btn {
+      display: inline-block;
+      padding: 0.8rem 1.5rem;
+      background: #6c757d;
+      color: white;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.95rem;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      letter-spacing: 0.3px;
+      margin-bottom: 2rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .back-btn:hover {
+      background: #5a6268;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
+    }
+
+    .priority-badge {
+      display: inline-block;
+      padding: 0.25rem 0.6rem;
+      background: #28a745;
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 12px;
+      margin-left: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="nav-logo">
+      <img src="{% static 'images/logo.png' %}" alt="BookMate Logo">
+      <span class="brand">BookMate</span>
+    </div>
+    <div class="nav-center-decor">
+      <div class="vine-left">🌿</div>
+      <div class="scattered-items">
+        <span class="item book" style="--delay: 0s; --rotation: -8deg;">📕</span>
+        <span class="item paper" style="--delay: 0.3s; --rotation: 5deg;">📄</span>
+        <span class="item book" style="--delay: 0.6s; --rotation: 12deg;">📘</span>
+        <span class="item paper" style="--delay: 0.9s; --rotation: -15deg;">📄</span>
+        <span class="item book" style="--delay: 1.2s; --rotation: -5deg;">📗</span>
+        <span class="item paper" style="--delay: 1.5s; --rotation: 8deg;">📄</span>
+        <span class="item book" style="--delay: 1.8s; --rotation: 10deg;">📙</span>
+      </div>
+      <div class="vine-right">🌿</div>
+    </div>
+    <div class="hamburger-menu">
+      <button class="hamburger-btn" id="hamburgerBtn">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+      <div class="dropdown-menu" id="dropdownMenu">
+        <a href="{% url 'dashboard' %}">📚 Dashboard</a>
+        <a href="{% url 'profile' %}">👤 Profile</a>
+        <a href="{% url 'logout' %}" class="logout-link">🚪 Logout</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="buy-links-container">
+    <a href="{% url 'dashboard' %}" class="back-btn">← Back to Dashboard</a>
+
+    <div class="book-header">
+      {% if cover_url %}
+        <img src="{{ cover_url }}" alt="{{ title }}">
+      {% else %}
+        <div style="width: 150px; height: 220px; background: #e9ecef; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-size: 3rem;">📚</div>
+      {% endif %}
+      <div class="book-header-info">
+        <h1>{{ title }}</h1>
+        <h2>by {{ author }}</h2>
+        <p>Find and purchase this book from trusted bookstores below.</p>
+      </div>
+    </div>
+
+    <!-- Philippine Bookstores (Priority) -->
+    <div class="bookstore-section">
+      <h3>🇵🇭 Philippine Bookstores <span class="priority-badge">RECOMMENDED</span></h3>
+      <div class="bookstore-grid">
+        {% for store in ph_bookstores %}
+        <div class="bookstore-card">
+          <div class="bookstore-info">
+            <h4>{{ store.name }}</h4>
+            <p>{{ store.description }}</p>
+            <span class="currency-badge">{{ store.currency }}</span>
+          </div>
+          <a href="{{ store.url }}" target="_blank" class="visit-btn">Visit Store →</a>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- International Bookstores -->
+    <div class="bookstore-section">
+      <h3>🌍 International Bookstores</h3>
+      <div class="bookstore-grid">
+        {% for store in international_bookstores %}
+        <div class="bookstore-card">
+          <div class="bookstore-info">
+            <h4>{{ store.name }}</h4>
+            <p>{{ store.description }}</p>
+            <span class="currency-badge">{{ store.currency }}</span>
+          </div>
+          <a href="{{ store.url }}" target="_blank" class="visit-btn">Visit Store →</a>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Hamburger menu
+    document.addEventListener("DOMContentLoaded", () => {
+      const hamburgerBtn = document.getElementById("hamburgerBtn");
+      const dropdownMenu = document.getElementById("dropdownMenu");
+
+      if (hamburgerBtn && dropdownMenu) {
+        hamburgerBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          hamburgerBtn.classList.toggle("active");
+          dropdownMenu.classList.toggle("show");
+        });
+
+        document.addEventListener("click", (e) => {
+          if (!hamburgerBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+            hamburgerBtn.classList.remove("active");
+            dropdownMenu.classList.remove("show");
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

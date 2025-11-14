@@ -17,7 +17,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: white;
+  background: linear-gradient(135deg, #F5EFE6 0%, #E8DCC8 100%);
   color: #3B2B1C;
   padding: 1.2rem 3rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -25,7 +25,6 @@ body {
   top: 0;
   z-index: 1000;
   border-bottom: 3px solid #C6A34F;
-  position: relative;
 }
 
 /* Decorative corner ornaments */
@@ -413,12 +412,14 @@ body {
   align-items: center;
   gap: 0.5rem;
   padding: 0.8rem 1.5rem;
-  background: linear-gradient(135deg, #C6A34F 0%, #A88939 100%);
+  background: #6c757d;
   color: white;
   text-decoration: none;
   border-radius: 8px;
-  font-weight: 600;
-  font-size: 1rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  letter-spacing: 0.3px;
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   border: 2px solid transparent;
@@ -426,8 +427,9 @@ body {
 
 .back-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(198, 163, 79, 0.4);
-  border-color: #A88939;
+  background: #5a6268;
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
+  border-color: #545b62;
 }
 
 .back-button:active {
@@ -442,10 +444,6 @@ body {
 
 .back-button:hover .back-arrow {
   transform: translateX(-4px);
-}
-
-.back-text {
-  letter-spacing: 0.3px;
 }
 
 /* ========== Layout ========== */
@@ -517,18 +515,20 @@ body {
   color: white;
   border: none;
   padding: 0.8rem 2rem;
-  border-radius: 25px;
+  border-radius: 8px;
   margin-top: 1.5rem;
   font-weight: 700;
+  font-size: 0.95rem;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  letter-spacing: 0.3px;
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(198, 163, 79, 0.4);
-  font-size: 1rem;
 }
 
 .add-button:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(198, 163, 79, 0.6);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(198, 163, 79, 0.4);
 }
 
 /* Right section (Details + Recommendations) */
@@ -577,6 +577,160 @@ body {
   color: #4a5568;
   line-height: 1.8;
   font-size: 1rem;
+}
+
+/* Tags Section */
+.tags-section {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 2px solid #e9ecef;
+}
+
+.tags-section h4 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #2d3748;
+  font-weight: 600;
+}
+
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  min-height: 40px;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #C6A34F 0%, #A88939 100%);
+  color: white;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(198, 163, 79, 0.3);
+  transition: all 0.3s ease;
+  animation: tagFadeIn 0.3s ease;
+}
+
+@keyframes tagFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.tag:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(198, 163, 79, 0.4);
+}
+
+.remove-tag-btn {
+  background: rgba(255, 255, 255, 0.3);
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  font-weight: bold;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  padding: 0;
+  line-height: 1;
+}
+
+.remove-tag-btn:hover {
+  background: rgba(255, 255, 255, 0.5);
+  transform: scale(1.1);
+}
+
+.no-tags-message {
+  color: #6c757d;
+  font-style: italic;
+  margin: 0;
+}
+
+.add-tag-form {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+#tagInput {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+#tagInput:focus {
+  outline: none;
+  border-color: #C6A34F;
+  box-shadow: 0 0 0 3px rgba(198, 163, 79, 0.1);
+}
+
+.add-tag-btn {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #C6A34F 0%, #A88939 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.add-tag-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(198, 163, 79, 0.4);
+}
+
+.add-tag-btn:active {
+  transform: translateY(0);
+}
+
+.tag-suggestions {
+  display: none;
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  background: white;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.tag-suggestions.show {
+  display: block;
+}
+
+.tag-suggestion {
+  padding: 0.5rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.tag-suggestion:hover {
+  background: #f8f9fa;
 }
 
 /* Recommendations section */

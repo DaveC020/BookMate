@@ -4,6 +4,7 @@ import {
   toggleSections,
   renderSearchResults,
   handleBookRemoval,
+  attachAddButtonHandlers,
 } from "./utils/ui.js";
 import { showWarning, showError, showSuccess, showInfo } from "./utils/notifications.js";
 import { confirmBookRemoval } from "./utils/confirm-dialog.js";
@@ -19,6 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initSortHandler();
   restoreSearchFromURL();
   initProgressBars();
+  attachAddButtonHandlers(); // Attach handlers for recommendation books
 });
 
 // Initialize progress bars on page load
@@ -602,3 +604,4 @@ function sortBooks(sortBy) {
     }
   }
 }
+

@@ -2,6 +2,27 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
+# User Profile model to store favorite genres
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    favorite_genres = models.CharField(
+        max_length=500, 
+        blank=True, 
+        null=True,
+        help_text="Comma-separated favorite genres selected during registration"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"{self.user.username}'s Profile"
+    
+    def get_favorite_genres_list(self):
+        """Returns favorite genres as a list"""
+        if self.favorite_genres:
+            return [g.strip() for g in self.favorite_genres.split(',') if g.strip()]
+        return []
+
+
 #User book list model
 class UserBookList(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='book_list')
@@ -13,8 +34,12 @@ class UserBookList(models.Model):
     description = models.TextField(blank=True, null=True)
     is_favorite = models.BooleanField(default=False)
     current_page = models.IntegerField(default=0)
-
-
+    tags = models.CharField(
+        max_length=500,
+        blank=True,
+        null=True,
+        help_text="Comma-separated custom tags (e.g., 'School, Romance, Adventure')"
+    )
 
     class Meta:
         constraints = [
@@ -24,3 +49,14 @@ class UserBookList(models.Model):
 
     def __str__(self):
         return f"{self.title} by {self.author or 'Unknown'}"
+    
+    def get_tags_list(self):
+        """Returns tags as a list"""
+        if self.tags:
+            return [tag.strip() for tag in self.tags.split(',') if tag.strip()]
+        return []
+    
+    def set_tags_list(self, tags_list):
+        """Sets tags from a list"""
+        self.tags = ", ".join(tags_list) if tags_list else ""
+

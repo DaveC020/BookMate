@@ -3,12 +3,14 @@ from django.contrib.auth import login, logout
 from django.contrib import messages
 from .forms import RegisterForm, LoginForm
 from django.contrib.auth.models import User
-from .models import UserBookList
+from .models import UserBookList, UserProfile
 from django.shortcuts import render, get_object_or_404
 from django.core.cache import cache
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.db import IntegrityError
+from django.db.models import F
+import requests
 
 #register function
 def register_view(request):
@@ -87,15 +89,6 @@ def landing_view(request):
     login_errors = request.session.pop('login_errors', {})
     open_modal = request.GET.get('modal', '')
     
-    # DEBUG: Test if messages work
-    if request.GET.get('test'):
-        messages.info(request, "🔔 This is a test notification!")
-        messages.error(request, "⚠️ This is a test error!")
-        messages.success(request, "✅ This is a test success!")
-    
-    if request.GET.get('modal'):
-        print(f"Modal parameter detected: {request.GET.get('modal')}")
-    
     return render(request, 'landing.html', {
         'register_errors': register_errors,
         'login_errors': login_errors,
@@ -105,7 +98,13 @@ def landing_view(request):
 def genre_setup_view(request):
     if request.method == "POST":
         selected_genres = request.POST.getlist("genres")
-        # TODO: Save genres to user profile (later)
+        if selected_genres:
+            # Get or create user profile
+            profile, created = UserProfile.objects.get_or_create(user=request.user)
+            # Save selected genres as comma-separated string
+            profile.favorite_genres = ", ".join(selected_genres)
+            profile.save()
+            messages.success(request, f"Favorite genres saved! ({len(selected_genres)} genres selected)")
         return redirect('dashboard')
     return render(request, 'genre_setup.html')
 
@@ -115,9 +114,73 @@ def dashboard_view(request):
 
     # Fetch this user's saved books
     user_books = UserBookList.objects.filter(user=request.user).order_by('title')
-
+    
+    # Initialize variables
+    recommended_books = []
+    user_favorite_genres = []
+    user_tags = set()
+    
+    # Collect all unique tags from user's books
+    for book in user_books:
+        if book.tags:
+            user_tags.update(book.get_tags_list())
+    
+    # Get user's profile with favorite genres
+    profile = None
+    try:
+        profile = UserProfile.objects.get(user=request.user)
+        if profile.favorite_genres:
+            user_favorite_genres = profile.get_favorite_genres_list()
+    except UserProfile.DoesNotExist:
+        pass
+    
+    # Build search terms from genres and tags
+    search_terms = []
+    if user_favorite_genres:
+        search_terms.extend(user_favorite_genres[:3])
+    if user_tags:
+        search_terms.extend(list(user_tags)[:2])
+    
+    # Fetch recommendations if we have search terms
+    if search_terms:
+        try:
+            query = "+".join(search_terms)  # Use + for better search
+            url = f"https://openlibrary.org/search.json?q={query}&limit=20"
+            
+            response = requests.get(url, timeout=10)
+            if response.status_code == 200:
+                data = response.json()
+                user_olids = set(user_books.values_list('olid', flat=True))
+                
+                for book in data.get("docs", []):
+                    if len(recommended_books) >= 12:
+                        break
+                    
+                    # Get OLID
+                    olid = book.get("cover_edition_key")
+                    if not olid and book.get("edition_key"):
+                        olid = book.get("edition_key")[0]
+                    
+                    # Skip if no OLID or user already has it
+                    if not olid or olid in user_olids:
+                        continue
+                    
+                    # Add to recommendations
+                    recommended_books.append({
+                        "title": book.get("title", "Unknown Title"),
+                        "author": ", ".join(book.get("author_name", [])) if book.get("author_name") else "Unknown",
+                        "cover_url": f"https://covers.openlibrary.org/b/olid/{olid}-M.jpg",
+                        "olid": olid,
+                        "year": book.get("first_publish_year", "Unknown"),
+                    })
+        except Exception as e:
+            print(f"Error fetching recommendations: {e}")
+    
     return render(request, "dashboard.html", {
-        "user_books": user_books
+        "user_books": user_books,
+        "recommended_books": recommended_books,
+        "user_favorite_genres": user_favorite_genres,
+        "user_tags": sorted(list(user_tags)),
     })
 
 
@@ -125,7 +188,115 @@ def dashboard_view(request):
 def profile_view(request):
     if not request.user.is_authenticated:
         return redirect('login')
-    return render(request, 'profile.html', {'user': request.user})
+    
+    # Get user's books
+    user_books = UserBookList.objects.filter(user=request.user)
+    
+    # Calculate stats
+    total_books = user_books.count()
+    books_with_progress = user_books.exclude(current_page__gte=F('pages'), pages__gt=0)  # Show all books except finished ones
+    finished_books = user_books.filter(current_page__gte=F('pages'), pages__gt=0)
+    favorite_books = user_books.filter(is_favorite=True)
+    
+    # Get user's favorite genres from profile
+    user_favorite_genres = []
+    try:
+        profile = UserProfile.objects.get(user=request.user)
+        user_favorite_genres = profile.get_favorite_genres_list()
+    except UserProfile.DoesNotExist:
+        user_favorite_genres = []
+    
+    context = {
+        'user': request.user,
+        'total_books': total_books,
+        'currently_reading': books_with_progress.count(),
+        'finished_books': finished_books.count(),
+        'favorite_books_count': favorite_books.count(),
+        'user_favorite_genres': user_favorite_genres,
+        'reading_books': books_with_progress[:100],  # Show 100 currently reading
+        'completed_books': finished_books[:100],  # Show 100 finished
+        'favorite_books': favorite_books[:100],  # Show 100 favorite books
+    }
+    
+    return render(request, 'profile.html', context)
+
+
+def buy_book_links(request, olid):
+    """Display buy links for a book - Philippine stores first, then international"""
+    if not request.user.is_authenticated:
+        return redirect('login')
+    
+    # Get book details
+    book = UserBookList.objects.filter(user=request.user, olid=olid).first()
+    
+    if book:
+        title = book.title
+        author = book.author or "Unknown"
+        cover_url = book.cover_url
+    else:
+        # If user doesn't have the book, try to get info from the page context
+        title = request.GET.get('title', 'Book')
+        author = request.GET.get('author', 'Unknown')
+        cover_url = request.GET.get('cover', '')
+    
+    # Build search query
+    search_query = f"{title} {author}".strip()
+    
+    # Philippine bookstores (prioritized)
+    ph_bookstores = [
+        {
+            "name": "Fully Booked",
+            "url": f"https://www.fullybookedonline.com/search?q={search_query}",
+            "description": "Philippines' largest bookstore chain",
+            "currency": "PHP"
+        },
+        {
+            "name": "National Book Store",
+            "url": f"https://www.nationalbookstore.com/search?q={search_query}",
+            "description": "Trusted Philippine bookstore since 1942",
+            "currency": "PHP"
+        },
+        {
+            "name": "Book Sale",
+            "url": f"https://www.booksale.com.ph/search?q={search_query}",
+            "description": "Affordable books in the Philippines",
+            "currency": "PHP"
+        },
+    ]
+    
+    # International bookstores (fallback)
+    international_bookstores = [
+        {
+            "name": "Amazon",
+            "url": f"https://www.amazon.com/s?k={search_query}",
+            "description": "Global online retailer",
+            "currency": "USD"
+        },
+        {
+            "name": "Book Depository",
+            "url": f"https://www.bookdepository.com/search?searchTerm={search_query}",
+            "description": "Free worldwide delivery",
+            "currency": "USD"
+        },
+        {
+            "name": "AbeBooks",
+            "url": f"https://www.abebooks.com/servlet/SearchResults?kn={search_query}",
+            "description": "New, used, and rare books",
+            "currency": "USD"
+        },
+    ]
+    
+    context = {
+        'book': book,
+        'title': title,
+        'author': author,
+        'cover_url': cover_url,
+        'olid': olid,
+        'ph_bookstores': ph_bookstores,
+        'international_bookstores': international_bookstores,
+    }
+    
+    return render(request, 'buy_book_links.html', context)
 
 
 def edit_profile_view(request):
@@ -160,11 +331,9 @@ def edit_profile_view(request):
 
 
 #api functionalities
-import requests
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
-from .models import UserBookList
 
 # --- SEARCH BOOKS via Open Library API ---
 def search_books(request):
@@ -368,6 +537,9 @@ def dashboard(request):
     user_books = UserBookList.objects.filter(user=request.user)
     return render(request, 'dashboard.html', {'user_books': user_books})
 
+
+# --- UPDATE BOOK DETAILS (genres, tags, links) ---
+@csrf_exempt
 # def book_preview(request, olid):
 #     book = get_object_or_404(UserBookList, olid=olid, user=request.user)
 #     return render(request, 'book_preview.html', {'book': book})
@@ -490,6 +662,10 @@ def book_preview(request, olid):
         user_book = UserBookList.objects.filter(user=request.user, olid=olid).first()
         pages = user_book.pages if user_book else 0
 
+    # Get user's book tags if they have this book
+    user_book = UserBookList.objects.filter(user=request.user, olid=olid).first()
+    book_tags = user_book.get_tags_list() if user_book else []
+
     # ✅ Prepare context
     context = {
         "title": title,
@@ -498,7 +674,57 @@ def book_preview(request, olid):
         "cover_url": cover_url,
         "olid": olid,
         "pages": pages or 0,
+        "book_tags": book_tags,
+        "has_book": user_book is not None,
     }
 
     cache.set(cache_key, context, timeout=3600)
     return render(request, "book_preview.html", context)
+
+
+# --- UPDATE BOOK TAGS ---
+@csrf_exempt
+def update_tags(request):
+    if request.method == "POST":
+        if not request.user.is_authenticated:
+            return JsonResponse({"success": False, "message": "Not logged in"}, status=403)
+        
+        data = json.loads(request.body)
+        olid = data.get("olid")
+        tags = data.get("tags", [])  # Expecting a list of tags
+        
+        if not olid:
+            return JsonResponse({"success": False, "message": "No OLID provided"}, status=400)
+        
+        try:
+            book = UserBookList.objects.get(user=request.user, olid=olid)
+            book.set_tags_list(tags)
+            book.save()
+            
+            return JsonResponse({
+                "success": True,
+                "message": "Tags updated successfully!",
+                "tags": book.get_tags_list()
+            })
+        except UserBookList.DoesNotExist:
+            return JsonResponse({"success": False, "message": "Book not found"}, status=404)
+        except Exception as e:
+            return JsonResponse({"success": False, "message": str(e)}, status=500)
+    
+    return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
+
+
+# --- GET USER'S ALL TAGS (for autocomplete) ---
+def get_user_tags(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({"tags": []})
+    
+    # Get all unique tags from user's books
+    user_books = UserBookList.objects.filter(user=request.user)
+    all_tags = set()
+    
+    for book in user_books:
+        if book.tags:
+            all_tags.update(book.get_tags_list())
+    
+    return JsonResponse({"tags": sorted(all_tags)})
