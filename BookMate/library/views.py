@@ -14,6 +14,10 @@ import requests
 
 #register function
 def register_view(request):
+    # Redirect authenticated users to dashboard
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    
     if request.method == "POST":
         form = RegisterForm(request.POST)
         if form.is_valid():
@@ -25,32 +29,14 @@ def register_view(request):
                 return redirect(f"{reverse('landing')}?modal=login")
             except IntegrityError:
                 # Username or email already exists
-                print("IntegrityError: Username already exists")
                 request.session['register_errors'] = {
-                    'username': ['This username is already taken. Please choose another one.']
+                    'general': ['Invalid credentials. Please check your information and try again.']
                 }
                 return redirect(f"{reverse('landing')}?modal=register")
             
         else:
-            print("=== FORM VALIDATION FAILED ===")
-            print(f"Form errors: {form.errors}")
-            
-            # Store errors in session to display on landing page
-            errors_dict = {}
-            
-            # Handle field-specific errors
-            for field, error_list in form.errors.items():
-                if field == '__all__':
-                    # Non-field errors (like password mismatch) - assign to password2
-                    errors_dict['password2'] = [str(e) for e in error_list]
-                else:
-                    errors_dict[field] = [str(e) for e in error_list]
-            
-            request.session['register_errors'] = errors_dict
-            
-            print(f"Redirecting to landing with modal=register")
-            print(f"Errors to display: {errors_dict}")
-            # Use redirect with query string
+            # Generic error message for security and formality
+            request.session['register_errors'] = {'general': ['Invalid credentials. Please check your information and try again.']}
             return redirect(f"{reverse('landing')}?modal=register")
     else:
         # Redirect GET requests to landing page
@@ -58,21 +44,25 @@ def register_view(request):
 
 #login function
 def login_view(request):
+    # Redirect authenticated users to dashboard
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    
     if request.method == "POST":
         form = LoginForm(request, data=request.POST)
         username = request.POST.get("username")
         password = request.POST.get("password")
 
-        # Check if username exists before validating the form
-        if not User.objects.filter(username=username).exists():
-            request.session['login_errors'] = {'username': ['User does not exist.']}
-            return redirect(f"{reverse('landing')}?modal=login")
-        elif form.is_valid():
+        # Validate credentials
+        if form.is_valid():
             user = form.get_user()
             login(request, user)
             return redirect("dashboard")
         else:
-            request.session['login_errors'] = {'password': ['Incorrect password.']}
+            # Generic error message for security
+            request.session['login_errors'] = {'general': ['Invalid credentials. Please try again.']}
+            # Save username to repopulate the form
+            request.session['login_username'] = username
             return redirect(f"{reverse('landing')}?modal=login")
     else:
         # Redirect GET requests to landing page
@@ -84,18 +74,27 @@ def logout_view(request):
     return redirect("landing")
 
 def landing_view(request):
+    # Redirect authenticated users to dashboard
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    
     # Get form errors from session if they exist
     register_errors = request.session.pop('register_errors', {})
     login_errors = request.session.pop('login_errors', {})
+    login_username = request.session.pop('login_username', '')
     open_modal = request.GET.get('modal', '')
     
     return render(request, 'landing.html', {
         'register_errors': register_errors,
         'login_errors': login_errors,
+        'login_username': login_username,
         'open_modal': open_modal,
     })
 
 def genre_setup_view(request):
+    if not request.user.is_authenticated:
+        return redirect('landing')
+    
     if request.method == "POST":
         selected_genres = request.POST.getlist("genres")
         if selected_genres:
