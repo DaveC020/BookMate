@@ -480,14 +480,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // Toggle dropdown on button click
     hamburgerBtn.addEventListener("click", (e) => {
       e.stopPropagation();
-      hamburgerBtn.classList.toggle("active");
       dropdownMenu.classList.toggle("show");
     });
 
     // Close dropdown when clicking outside
     document.addEventListener("click", (e) => {
       if (!hamburgerBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
-        hamburgerBtn.classList.remove("active");
         dropdownMenu.classList.remove("show");
       }
     });
@@ -495,7 +493,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // Close dropdown when clicking a link
     dropdownMenu.querySelectorAll("a").forEach((link) => {
       link.addEventListener("click", () => {
-        hamburgerBtn.classList.remove("active");
         dropdownMenu.classList.remove("show");
       });
     });

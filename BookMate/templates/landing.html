@@ -59,19 +59,26 @@
       
       <form method="post" action="{% url 'login' %}" class="modal-form">
         {% csrf_token %}
+        
+        <!-- Generic error message -->
+        {% if login_errors.general %}
+          <div class="error-banner">
+            <span class="error-icon">⚠️</span>
+            <span class="error-text">{{ login_errors.general.0 }}</span>
+          </div>
+        {% endif %}
+        
         <div class="input-group">
           <label for="login-username">Username</label>
           <input type="text" id="login-username" name="username" required
-                 class="{% if login_errors.username %}error{% endif %}">
-          {% if login_errors.username %}
-            <span class="error-message">{{ login_errors.username.0 }}</span>
-          {% endif %}
+                 value="{{ login_username }}"
+                 class="{% if login_errors.general %}error{% endif %}">
         </div>
         <div class="input-group">
           <label for="login-password">Password</label>
           <div class="password-wrapper">
             <input type="password" id="login-password" name="password" required
-                   class="{% if login_errors.password %}error{% endif %}">
+                   class="{% if login_errors.general %}error{% endif %}">
             <button type="button" class="password-toggle" onclick="togglePassword('login-password', this)">
               <span class="eye-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -81,9 +88,6 @@
               </span>
             </button>
           </div>
-          {% if login_errors.password %}
-            <span class="error-message">{{ login_errors.password.0 }}</span>
-          {% endif %}
         </div>
         <button type="submit" class="btn-modal-primary">Sign In</button>
       </form>
@@ -105,27 +109,30 @@
       </div>
       <form method="post" action="{% url 'register' %}" class="modal-form">
         {% csrf_token %}
+        
+        <!-- Generic error message -->
+        {% if register_errors.general %}
+          <div class="error-banner">
+            <span class="error-icon">⚠️</span>
+            <span class="error-text">{{ register_errors.general.0 }}</span>
+          </div>
+        {% endif %}
+        
         <div class="input-group">
           <label for="register-username">Username</label>
           <input type="text" id="register-username" name="username" required 
-                 class="{% if register_errors.username %}error{% endif %}">
-          {% if register_errors.username %}
-            <span class="error-message">{{ register_errors.username.0 }}</span>
-          {% endif %}
+                 class="{% if register_errors.general %}error{% endif %}">
         </div>
         <div class="input-group">
           <label for="register-email">Email</label>
           <input type="email" id="register-email" name="email" required
-                 class="{% if register_errors.email %}error{% endif %}">
-          {% if register_errors.email %}
-            <span class="error-message">{{ register_errors.email.0 }}</span>
-          {% endif %}
+                 class="{% if register_errors.general %}error{% endif %}">
         </div>
         <div class="input-group">
           <label for="register-password1">Password</label>
           <div class="password-wrapper">
             <input type="password" id="register-password1" name="password1" required
-                   class="{% if register_errors.password1 %}error{% endif %}">
+                   class="{% if register_errors.general %}error{% endif %}">
             <button type="button" class="password-toggle" onclick="togglePassword('register-password1', this)">
               <span class="eye-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -135,15 +142,12 @@
               </span>
             </button>
           </div>
-          {% if register_errors.password1 %}
-            <span class="error-message">{{ register_errors.password1.0 }}</span>
-          {% endif %}
         </div>
         <div class="input-group">
           <label for="register-password2">Confirm Password</label>
           <div class="password-wrapper">
             <input type="password" id="register-password2" name="password2" required
-                   class="{% if register_errors.password2 %}error{% endif %}">
+                   class="{% if register_errors.general %}error{% endif %}">
             <button type="button" class="password-toggle" onclick="togglePassword('register-password2', this)">
               <span class="eye-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
