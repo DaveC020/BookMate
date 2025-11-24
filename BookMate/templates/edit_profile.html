@@ -6,11 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Edit Profile — BookMate</title>
   <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+  <link rel="stylesheet" href="{% static 'css/edit_profile.css' %}">
   <link rel="stylesheet" href="{% static 'css/notifications.css' %}">
   <link rel="stylesheet" href="{% static 'css/confirm-dialog.css' %}">
 </head>
 <body>
-  <!-- 🔙 Navbar -->
+  <!-- Navbar -->
   <header class="navbar">
     <div class="nav-logo">
       <img src="{% static 'images/logo.png' %}" alt="BookMate Logo">
@@ -18,66 +19,252 @@
     </div>
 
     <div class="nav-center-decor">
-      <span class="book-spine">📕</span>
-      <span class="book-spine">📗</span>
-      <span class="book-spine">📘</span>
-      <span class="book-spine">📙</span>
-      <span class="book-spine">📕</span>
+      <div class="vine-left">🌿</div>
+      <div class="scattered-items">
+        <span class="item book" style="--delay: 0s; --rotation: -8deg;">📕</span>
+        <span class="item paper" style="--delay: 0.3s; --rotation: 5deg;">📄</span>
+        <span class="item book" style="--delay: 0.6s; --rotation: 12deg;">📘</span>
+        <span class="item paper" style="--delay: 0.9s; --rotation: -15deg;">📃</span>
+        <span class="item book" style="--delay: 1.2s; --rotation: -5deg;">📗</span>
+        <span class="item paper" style="--delay: 1.5s; --rotation: 8deg;">📄</span>
+        <span class="item book" style="--delay: 1.8s; --rotation: 10deg;">📙</span>
+      </div>
+      <div class="vine-right">🌿</div>
     </div>
 
-    <nav>
-      
-      <a href="{% url 'profile' %}" class="btn-secondary">Cancel Changes</a>
-    </nav>
+    <!-- Hamburger Menu -->
+    <div class="hamburger-menu">
+      <button class="hamburger-btn" id="hamburgerBtn">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+      <div class="dropdown-menu" id="dropdownMenu">
+        <a href="{% url 'dashboard' %}">📚 Dashboard</a>
+        <a href="{% url 'profile' %}">👤 My Profile</a>
+        <a href="{% url 'logout' %}" class="logout-link">🚪 Logout</a>
+      </div>
+    </div>
   </header>
 
-  <main class="edit-container">
-    <form class="edit-box" method="post">
-      {% csrf_token %}
-      <div class="profile-photo">
-        <img src="{% static 'images/user-placeholder.png' %}" alt="User Avatar">
-        <button type="button" class="upload-btn">Upload New Photo</button>
+  <main class="edit-profile-container">
+    <div class="edit-profile-card">
+      <div class="card-header">
+        <h1>Edit Profile</h1>
+        <p>Update your personal information and profile picture</p>
       </div>
 
-      <div class="input-group">
-        <label>Bio</label>
-        <textarea name="bio" placeholder="Tell us about yourself...">{{ user.profile.bio }}</textarea>
-      </div>
-
-      <div class="input-group">
-        <label>Username</label>
-        <input type="text" name="username" value="{{ user.username }}">
-      </div>
-
-      <div class="input-group">
-        <label>Email</label>
-        <input type="email" name="email" value="{{ user.email }}">
-      </div>
-
-      <div class="input-group">
-        <label>Password</label>
-        <input type="password" name="password1" placeholder="Enter new password">
-      </div>
-
-      <div class="input-group">
-        <label>Confirm Password</label>
-        <input type="password" name="password2" placeholder="Confirm password">
-      </div>
-
-      <div class="genre-section">
-        <h3>Genres</h3>
-        <div class="genre-grid">
-          <label><input type="checkbox"> Fantasy</label>
-          <label><input type="checkbox"> Mystery</label>
-          <label><input type="checkbox"> Romance</label>
-          <label><input type="checkbox"> Science Fiction</label>
-          <label><input type="checkbox"> History</label>
-          <label><input type="checkbox"> Thriller</label>
+      <!-- Profile Picture Section -->
+      <div class="profile-picture-section">
+        <div class="picture-preview">
+          {% if profile_picture_url %}
+            <img src="{{ profile_picture_url }}" alt="{{ user.username }}" class="current-picture" id="profilePreview">
+          {% else %}
+            <div class="picture-placeholder" id="profilePreview">
+              <span class="placeholder-initial">{{ user.username|first|upper }}</span>
+            </div>
+          {% endif %}
+        </div>
+        <div class="picture-controls">
+          <h3>Profile Picture</h3>
+          <p class="help-text">JPG, PNG, GIF or WEBP. Max size 5MB.</p>
+          <div class="upload-buttons">
+            <button type="button" class="upload-btn" id="uploadBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+              Upload New Picture
+            </button>
+            <input type="file" id="profilePictureInput" accept="image/*" style="display: none;">
+          </div>
         </div>
       </div>
 
-      <button type="submit" class="btn-primary">Save</button>
-    </form>
+      <div class="divider"></div>
+
+      <!-- User Information Form -->
+      <form method="post" class="profile-form">
+        {% csrf_token %}
+        
+        <div class="form-section">
+          <h3 class="section-title">Account Information</h3>
+          
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" value="{{ user.username }}" required>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" value="{{ user.email }}" required>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="form-section">
+          <h3 class="section-title">Change Password</h3>
+          <p class="section-description">Leave blank if you don't want to change your password</p>
+          
+          <div class="form-group">
+            <label for="password1">New Password</label>
+            <input type="password" id="password1" name="password1" placeholder="Enter new password">
+          </div>
+
+          <div class="form-group">
+            <label for="password2">Confirm New Password</label>
+            <input type="password" id="password2" name="password2" placeholder="Confirm new password">
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <a href="{% url 'profile' %}" class="btn-cancel">Cancel</a>
+          <button type="submit" class="btn-save">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+              <polyline points="17 21 17 13 7 13 7 21"></polyline>
+              <polyline points="7 3 7 8 15 8"></polyline>
+            </svg>
+            Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
   </main>
+
+  <!-- Notification Container -->
+  <div id="notification-container"></div>
+
+  <script src="{% static 'js/utils/notifications.js' %}"></script>
+  
+  <script>
+    // Hamburger Menu
+    document.addEventListener("DOMContentLoaded", function() {
+      const hamburgerBtn = document.getElementById("hamburgerBtn");
+      const dropdownMenu = document.getElementById("dropdownMenu");
+
+      if (hamburgerBtn && dropdownMenu) {
+        hamburgerBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          dropdownMenu.classList.toggle("show");
+        });
+
+        document.addEventListener("click", (e) => {
+          if (!hamburgerBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+            dropdownMenu.classList.remove("show");
+          }
+        });
+
+        dropdownMenu.querySelectorAll("a").forEach((link) => {
+          link.addEventListener("click", () => {
+            dropdownMenu.classList.remove("show");
+          });
+        });
+      }
+    });
+  </script>
+
+  <script>
+    // Profile Picture Upload
+    document.addEventListener('DOMContentLoaded', function() {
+      const uploadBtn = document.getElementById('uploadBtn');
+      const profilePictureInput = document.getElementById('profilePictureInput');
+      const profilePreview = document.getElementById('profilePreview');
+
+      uploadBtn.addEventListener('click', function() {
+        profilePictureInput.click();
+      });
+
+      profilePictureInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        console.log('File selected:', file.name, file.type, file.size);
+
+        // Validate file type
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+        if (!allowedTypes.includes(file.type)) {
+          showNotification('Please select a valid image file (JPG, PNG, GIF, or WEBP)', 'error');
+          return;
+        }
+
+        // Validate file size (5MB)
+        if (file.size > 5 * 1024 * 1024) {
+          showNotification('File size must be less than 5MB', 'error');
+          return;
+        }
+
+        // Preview image immediately
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          console.log('Image preview loaded');
+          if (profilePreview.tagName === 'IMG') {
+            profilePreview.src = event.target.result;
+          } else {
+            const img = document.createElement('img');
+            img.src = event.target.result;
+            img.alt = '{{ user.username }}';
+            img.className = 'current-picture';
+            img.id = 'profilePreview';
+            profilePreview.replaceWith(img);
+          }
+        };
+        reader.readAsDataURL(file);
+
+        // Upload to server
+        const formData = new FormData();
+        formData.append('profile_picture', file);
+
+        console.log('Starting upload to:', '{% url "upload_profile_picture" %}');
+        showNotification('Uploading profile picture...', 'info');
+
+        fetch('{% url "upload_profile_picture" %}', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-CSRFToken': getCookie('csrftoken')
+          }
+        })
+        .then(response => {
+          console.log('Response status:', response.status);
+          return response.json();
+        })
+        .then(data => {
+          console.log('Response data:', data);
+          if (data.success) {
+            showNotification(data.message, 'success');
+            const currentImage = document.getElementById('profilePreview');
+            if (currentImage && currentImage.tagName === 'IMG') {
+              currentImage.src = data.url;
+            }
+          } else {
+            showNotification(data.message, 'error');
+            console.error('Upload failed:', data.message);
+          }
+        })
+        .catch(error => {
+          showNotification('Upload failed. Please try again.', 'error');
+          console.error('Upload error:', error);
+        });
+      });
+
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+    });
+  </script>
 </body>
 </html>

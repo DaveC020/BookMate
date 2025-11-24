@@ -33,6 +33,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['bookmate-ya2p.onrender.com', 'localhost', '127.0.0.1']
 
+# Supabase Configuration
+SUPABASE_URL = os.getenv('SUPABASE_URL', '')
+SUPABASE_KEY = os.getenv('SUPABASE_KEY', '')
+SUPABASE_BUCKET = os.getenv('SUPABASE_BUCKET', 'profile-pictures')
+
 
 # Application definition
 

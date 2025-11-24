@@ -11,6 +11,12 @@ class UserProfile(models.Model):
         null=True,
         help_text="Comma-separated favorite genres selected during registration"
     )
+    profile_picture_url = models.URLField(
+        max_length=500,
+        blank=True,
+        null=True,
+        help_text="URL to profile picture stored in Supabase bucket"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
