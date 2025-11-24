@@ -39,7 +39,7 @@ function getTitle(type, customTitle) {
 }
 
 // Show notification
-export function showNotification(message, type = 'book', options = {}) {
+function showNotification(message, type = 'book', options = {}) {
   const container = initNotificationContainer();
   
   const {
@@ -105,23 +105,23 @@ function removeNotification(notification) {
 }
 
 // Convenience methods
-export function showSuccess(message, options = {}) {
+function showSuccess(message, options = {}) {
   return showNotification(message, 'success', options);
 }
 
-export function showError(message, options = {}) {
+function showError(message, options = {}) {
   return showNotification(message, 'error', options);
 }
 
-export function showWarning(message, options = {}) {
+function showWarning(message, options = {}) {
   return showNotification(message, 'warning', options);
 }
 
-export function showInfo(message, options = {}) {
+function showInfo(message, options = {}) {
   return showNotification(message, 'info', options);
 }
 
-export function showBookNotification(message, options = {}) {
+function showBookNotification(message, options = {}) {
   return showNotification(message, 'book', {
     title: 'BookMate',
     ...options
@@ -129,7 +129,7 @@ export function showBookNotification(message, options = {}) {
 }
 
 // Replace default alert function (optional)
-export function replaceDefaultAlert() {
+function replaceDefaultAlert() {
   window.alert = function(message) {
     showNotification(message, 'book');
   };

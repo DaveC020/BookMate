@@ -12,6 +12,7 @@ urlpatterns = [
     path('book/<str:olid>/buy/', views.buy_book_links, name='buy_book_links'),
     path('profile/', views.profile_view, name='profile'),
     path('edit_profile/', views.edit_profile_view, name='edit_profile'),
+    path('api/upload_profile_picture/', views.upload_profile_picture, name='upload_profile_picture'),
 
     # --- API routes for Open Library ---
     path('api/search/', views.search_books, name='search_books'),
