@@ -134,3 +134,6 @@ function replaceDefaultAlert() {
     showNotification(message, 'book');
   };
 }
+
+// Export for ES6 modules (dashboard.js)
+export { showNotification, showSuccess, showError, showWarning, showInfo, showBookNotification, replaceDefaultAlert };
