@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="{% static 'css/book_preview.css' %}?v=3">
   <link rel="stylesheet" href="{% static 'css/notifications.css' %}">
   <link rel="stylesheet" href="{% static 'css/confirm-dialog.css' %}">
+  <link rel="stylesheet" href="{% static 'css/purchase.css' %}">
   <title>{{ title }} - BookMate</title>
 </head>
 <body>
@@ -66,7 +67,25 @@
           <img class="main-book" src="{% static 'images/no-cover.png' %}" alt="No Cover Available">
         {% endif %}
       </div>
+      {% if not has_book %}
       <button class="add-button" data-olid="{{ olid }}">Add Book</button>
+      {% endif %}
+      
+      <!-- Book Links -->
+      <div class="book-links">
+        <a href="https://openlibrary.org/books/{{ olid }}" target="_blank" class="book-link-btn read-online-btn">
+          📖 Read Online
+        </a>
+        <button class="book-link-btn buy-btn" onclick="openPurchaseModal({
+          id: '',
+          olid: '{{ olid }}',
+          title: '{{ title|escapejs }}',
+          author: '{% if authors %}{{ authors|join:", "|escapejs }}{% else %}Unknown Author{% endif %}',
+          cover_url: '{{ cover_url|default:"/static/images/no-cover.png" }}'
+        })">
+          🛒 Buy Book
+        </button>
+      </div>
     </div>
 
     <div class="right-container">
@@ -86,6 +105,8 @@
         </p>
       </div>
 
+      </div>
+
       <div class="recommendations-container">
         <h3>Recommendations</h3>
         <div class="book-row">
@@ -95,6 +116,14 @@
     </div>
   </div>
 
-<script type="module" src="{% static 'js/book_preview.js' %}?v=2"></script>
+<!-- Include Purchase Modal -->
+{% include 'purchase_modal.html' %}
+
+<script type="module">
+  import { showNotification } from '{% static "js/utils/notifications.js" %}';
+  window.showNotification = showNotification;
+</script>
+<script type="module" src="{% static 'js/book_preview.js' %}?v=7"></script>
+<script src="{% static 'js/purchase-new.js' %}?v=2"></script>
 </body>
 </html>

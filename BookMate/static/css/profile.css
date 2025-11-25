@@ -1156,3 +1156,130 @@ button.btn-primary:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(198, 163, 79, 0.3);
 }
+
+/* Purchase History Styles */
+.purchase-history {
+  margin-top: 3rem;
+}
+
+.purchase-history h3 {
+  color: #2d3748;
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+}
+
+.purchase-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.purchase-item {
+  display: flex;
+  gap: 1.5rem;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  align-items: flex-start;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.purchase-item:hover {
+  border-color: #50C878;
+  box-shadow: 0 5px 15px rgba(80, 200, 120, 0.15);
+  transform: translateX(5px);
+}
+
+.purchase-book-cover {
+  flex-shrink: 0;
+}
+
+.purchase-book-cover img {
+  height: 140px;
+  width: 95px;
+  border-radius: 8px;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 3px solid #8B5A2B;
+}
+
+.purchase-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.purchase-book-title {
+  color: #2d3748;
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.purchase-book-author {
+  color: #718096;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.purchase-meta {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+.purchase-price {
+  color: #50C878;
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-family: 'Georgia', 'Times New Roman', serif;
+}
+
+.purchase-method {
+  color: #4a5568;
+  font-size: 0.9rem;
+  padding: 0.4rem 0.8rem;
+  background: #f7fafc;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+}
+
+.purchase-date {
+  color: #A0826D;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.purchase-transaction {
+  color: #718096;
+  font-size: 0.8rem;
+  font-family: monospace;
+  margin: 0;
+}
+
+.no-purchases,
+.loading-purchases,
+.error-purchases {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: #A0826D;
+  font-size: 1rem;
+  background: rgba(198, 163, 79, 0.05);
+  border-radius: 10px;
+  border: 2px dashed #C6A34F;
+}
+
+.loading-purchases {
+  border-color: #4A90E2;
+  color: #4A90E2;
+}
+
+.error-purchases {
+  border-color: #E74C3C;
+  color: #E74C3C;
+}

@@ -95,8 +95,9 @@ WSGI_APPLICATION = 'BookMate.wsgi.application'
 DATABASES = {
     "default": dj_database_url.config(
         default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
-        conn_max_age=600,
-        ssl_require=True
+        conn_max_age=0,  # Changed from 600 to 0 to close connections immediately
+        ssl_require=True,
+        conn_health_checks=True  # Enable connection health checks
     )
 }
 

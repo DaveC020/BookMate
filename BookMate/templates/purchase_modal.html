@@ -1,0 +1,187 @@
+<!-- Purchase Modal -->
+<div id="purchaseModal" class="modal">
+  <div class="modal-content purchase-modal-content">
+    <span class="close-modal" onclick="closePurchaseModal()">&times;</span>
+    
+    <div class="purchase-header">
+      <h2>🛒 Complete Your Purchase</h2>
+      <p class="modal-subtitle">Secure checkout for your book</p>
+    </div>
+
+    <!-- Book Summary -->
+    <div class="book-purchase-summary">
+      <img id="purchaseBookCover" src="" alt="Book Cover" class="purchase-book-cover">
+      <div class="purchase-book-info">
+        <h3 id="purchaseBookTitle"></h3>
+        <p id="purchaseBookAuthor"></p>
+        <p class="purchase-price" id="purchaseBookPrice"></p>
+      </div>
+    </div>
+
+    <!-- Payment Form -->
+    <form id="purchaseForm">
+      <input type="hidden" id="purchaseBookId" name="book_id">
+      <input type="hidden" id="purchaseBookOlid" name="olid">
+      
+      <!-- Payment Method -->
+      <div class="form-group">
+        <label class="form-label">
+          <span class="label-icon">💳</span>
+          Payment Method
+        </label>
+        <select id="paymentMethod" name="payment_method" class="form-input" required>
+          <option value="">Select Payment Method</option>
+          <option value="credit_card">Credit Card</option>
+          <option value="debit_card">Debit Card</option>
+        </select>
+      </div>
+
+      <!-- Card Details -->
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">
+            <span class="label-icon">🔢</span>
+            Card Number
+          </label>
+          <input 
+            type="text" 
+            id="cardNumber" 
+            name="card_number"
+            class="form-input" 
+            placeholder="1234 5678 9012 3456"
+            maxlength="19"
+            required>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">
+            <span class="label-icon">👤</span>
+            Cardholder Name
+          </label>
+          <input 
+            type="text" 
+            id="cardholderName" 
+            name="cardholder_name"
+            class="form-input" 
+            placeholder="John Doe"
+            required>
+        </div>
+      </div>
+
+      <div class="form-row two-col">
+        <div class="form-group">
+          <label class="form-label">
+            <span class="label-icon">📅</span>
+            Expiry Date
+          </label>
+          <input 
+            type="text" 
+            id="expiryDate" 
+            name="expiry_date"
+            class="form-input" 
+            placeholder="MM/YY"
+            maxlength="5"
+            required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">
+            <span class="label-icon">🔒</span>
+            CVV
+          </label>
+          <input 
+            type="text" 
+            id="cvv" 
+            name="cvv"
+            class="form-input" 
+            placeholder="123"
+            maxlength="3"
+            required>
+        </div>
+      </div>
+
+      <!-- Billing Address -->
+      <div class="billing-section">
+        <h3 class="section-title">📍 Billing Address</h3>
+        
+        <div class="form-group">
+          <label class="form-label">Street Address</label>
+          <input 
+            type="text" 
+            id="billingAddress" 
+            name="billing_address"
+            class="form-input" 
+            placeholder="123 Main Street"
+            required>
+        </div>
+
+        <div class="form-row two-col">
+          <div class="form-group">
+            <label class="form-label">City</label>
+            <input 
+              type="text" 
+              id="billingCity" 
+              name="billing_city"
+              class="form-input" 
+              placeholder="New York"
+              required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">State/Province</label>
+            <input 
+              type="text" 
+              id="billingState" 
+              name="billing_state"
+              class="form-input" 
+              placeholder="NY"
+              required>
+          </div>
+        </div>
+
+        <div class="form-row two-col">
+          <div class="form-group">
+            <label class="form-label">ZIP/Postal Code</label>
+            <input 
+              type="text" 
+              id="billingZip" 
+              name="billing_zip"
+              class="form-input" 
+              placeholder="10001"
+              required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Country</label>
+            <input 
+              type="text" 
+              id="billingCountry" 
+              name="billing_country"
+              class="form-input" 
+              placeholder="United States"
+              required>
+          </div>
+        </div>
+      </div>
+
+      <!-- Terms -->
+      <div class="terms-agreement">
+        <label class="checkbox-label">
+          <input type="checkbox" id="agreeTerms" required>
+          <span>I agree to the terms and conditions</span>
+        </label>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" onclick="closePurchaseModal()">
+          <span class="btn-icon">✕</span>
+          Cancel
+        </button>
+        <button type="submit" class="btn-purchase">
+          <span class="btn-icon">💰</span>
+          Complete Purchase
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -22,4 +22,8 @@ urlpatterns = [
     path('api/toggle_favorite/', views.toggle_favorite, name='toggle_favorite'),
     path('api/update_tags/', views.update_tags, name='update_tags'),
     path('api/get_user_tags/', views.get_user_tags, name='get_user_tags'),
+    
+    # --- Purchase routes ---
+    path('purchase/', views.purchase_book, name='purchase_book'),
+    path('api/purchase_history/', views.get_purchase_history, name='get_purchase_history'),
 ]

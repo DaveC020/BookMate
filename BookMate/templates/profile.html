@@ -207,6 +207,14 @@
           {% endfor %}
         </div>
       </div>
+
+      <!-- Purchase History Section -->
+      <div class="purchase-history">
+        <h3>🛒 Purchase History</h3>
+        <div id="purchaseHistoryContainer" class="purchase-list">
+          <p class="loading-purchases">Loading purchase history...</p>
+        </div>
+      </div>
     </section>
   </main>
 
@@ -249,7 +257,48 @@
           bar.style.width = progress + '%';
         }
       });
+      
+      // Load purchase history
+      loadPurchaseHistory();
     });
+    
+    async function loadPurchaseHistory() {
+      try {
+        const response = await fetch('/api/purchase_history/');
+        const data = await response.json();
+        
+        const container = document.getElementById('purchaseHistoryContainer');
+        
+        if (data.success && data.purchases.length > 0) {
+          container.innerHTML = data.purchases.map(purchase => `
+            <div class="purchase-item">
+              <div class="purchase-book-cover">
+                ${purchase.book_cover_url 
+                  ? `<img src="${purchase.book_cover_url}" alt="${purchase.book_title}">`
+                  : '<div class="no-cover-mini">📘</div>'
+                }
+              </div>
+              <div class="purchase-details">
+                <h4 class="purchase-book-title">${purchase.book_title}</h4>
+                <p class="purchase-book-author">${purchase.book_author}</p>
+                <div class="purchase-meta">
+                  <span class="purchase-price">$${purchase.price}</span>
+                  <span class="purchase-method">${purchase.payment_method} •••• ${purchase.card_last_four}</span>
+                </div>
+                <p class="purchase-date">${purchase.purchased_at}</p>
+                <p class="purchase-transaction">Transaction ID: ${purchase.transaction_id}</p>
+              </div>
+            </div>
+          `).join('');
+        } else {
+          container.innerHTML = '<p class="no-purchases">No purchases yet. Start building your digital library!</p>';
+        }
+      } catch (error) {
+        console.error('Error loading purchase history:', error);
+        document.getElementById('purchaseHistoryContainer').innerHTML = 
+          '<p class="error-purchases">Failed to load purchase history.</p>';
+      }
+    }
   </script>
 </body>
 </html>
