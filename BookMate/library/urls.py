@@ -26,4 +26,8 @@ urlpatterns = [
     # --- Purchase routes ---
     path('purchase/', views.purchase_book, name='purchase_book'),
     path('api/purchase_history/', views.get_purchase_history, name='get_purchase_history'),
+
+    # Read Book
+    path("api/mock-book/", views.get_mock_book, name="mock-book"),
+    path("read/", views.reader_view, name="reader"),
 ]
