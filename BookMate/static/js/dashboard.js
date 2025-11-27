@@ -24,17 +24,61 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // Initialize progress bars on page load
+// function initProgressBars() {
+//   const progressBars = document.querySelectorAll('[data-progress-bar]');
+  
+//   progressBars.forEach(bar => {
+//     const current = Number(bar.dataset.current) || 0;
+//     const total = Number(bar.dataset.total) || 0;
+//     const percent = total > 0 ? Math.round((current / total) * 100) : 0;
+    
+//     bar.style.width = `${percent}%`;
+//   });
+// }
+
 function initProgressBars() {
   const progressBars = document.querySelectorAll('[data-progress-bar]');
   
   progressBars.forEach(bar => {
-    const current = Number(bar.dataset.current) || 0;
+    const card = bar.closest(".book-card");
+    if (!card) return;
+
+    const olid = card.dataset.olid;
     const total = Number(bar.dataset.total) || 0;
+
+    // ✅ Pull latest page from reader localStorage
+    const savedPage = localStorage.getItem(`reader-progress-${olid}`);
+    const current = savedPage ? Number(savedPage) : Number(bar.dataset.current) || 1;
+
+    // ✅ Update DOM datasets so everything stays in sync
+    bar.dataset.current = current;
+    card.dataset.page = current;
+
+    // ✅ Compute percent safely
     const percent = total > 0 ? Math.round((current / total) * 100) : 0;
-    
+
+    // ✅ Update UI
     bar.style.width = `${percent}%`;
+
+    const progressText = card.querySelector("[data-progress-text]");
+    const progressPercent = card.querySelector(".progress-percentage");
+
+    if (progressText) {
+      progressText.textContent = `Page ${current} of ${total}`;
+    }
+
+    if (progressPercent) {
+      progressPercent.textContent = `${percent}%`;
+    }
+
+    // ✅ Also update edit button so modal opens with correct page
+    const editBtn = card.querySelector(".edit-btn");
+    if (editBtn) {
+      editBtn.dataset.page = current;
+    }
   });
 }
+
 
 function initSearchHandler() {
   const searchBtn = document.getElementById("searchButton");
@@ -282,7 +326,13 @@ function initEditHandler() {
     if (!editBtn) return;
 
     const olid = String(editBtn.dataset.olid || "");
-    const currentPage = Number(editBtn.dataset.page || 0);
+    const storageKey = `reader-progress-${olid}`;
+    const savedPage = localStorage.getItem(storageKey);
+
+    const currentPage = savedPage !== null
+      ? Number(savedPage)
+      : Number(editBtn.dataset.page || 0);
+
     const totalPages = Number(editBtn.dataset.pages || 0);
     const percent = totalPages > 0 ? Math.round((currentPage / totalPages) * 100) : 0;
 
@@ -328,6 +378,11 @@ function initEditHandler() {
         showError(data.message || "Failed to update progress");
         return;
       }
+
+      // ✅ Sync modal update to reader localStorage
+      localStorage.setItem(`reader-progress-${olid}`, progress);
+
+
 
       // ✅ Only update card in USER BOOKSHELF
       const card = document.querySelector(`#user-books .book-card[data-olid="${CSS.escape(olid)}"]`);
@@ -384,7 +439,7 @@ function initEditHandler() {
           "Content-Type": "application/json",
           "X-CSRFToken": getCookie("csrftoken"),
         },
-        body: JSON.stringify({ olid, progress: 0 }),
+        body: JSON.stringify({ olid, progress: 1 }),
       });
 
       const data = await res.json();
@@ -393,16 +448,20 @@ function initEditHandler() {
         return;
       }
 
+      // ✅ Sync reset to reader localStorage
+      localStorage.setItem(`reader-progress-${olid}`, 1);
+
+
       const card = document.querySelector(`#user-books .book-card[data-olid="${CSS.escape(olid)}"]`);
       const btn = card?.querySelector(".edit-btn");
 
-      if (btn) btn.dataset.page = "0";
-      if (card) card.dataset.page = "0";
+      if (btn) btn.dataset.page = "1";
+      if (card) card.dataset.page = "1";
 
       const progressEl = card?.querySelector("[data-progress-text]");
       if (progressEl) {
         const totalPages = Number(btn?.dataset.pages) || 0;
-        progressEl.textContent = `Page 0 of ${totalPages}`;
+        progressEl.textContent = `Page 1 of ${totalPages}`;
       }
 
       // ✅ Update progress bar to 0%
@@ -410,17 +469,26 @@ function initEditHandler() {
       const progressPercentage = card?.querySelector(".progress-percentage");
       if (progressBar) {
         progressBar.classList.add('updating');
-        progressBar.style.width = '0%';
+        const totalPages = Number(btn?.dataset.pages) || 0;
+        const percent = totalPages > 0 ? Math.round((1 / totalPages) * 100) : 0;
+
+        progressBar.style.width = `${percent}%`;
         if (progressPercentage) {
-          progressPercentage.textContent = '0%';
+          progressPercentage.textContent = `${percent}%`;
         }
+
         setTimeout(() => {
           progressBar.classList.remove('updating');
         }, 600);
       }
 
-      progressInput.value = 0;
-      currentPageLabel.textContent = `Page 0 of ${btn?.dataset.pages || 0} — 0% Complete`;
+      progressInput.value = 1;
+
+      const totalPages = Number(btn?.dataset.pages) || 0;
+      const percent = totalPages > 0 ? Math.round((1 / totalPages) * 100) : 0;
+
+      currentPageLabel.textContent = `Page 1 of ${totalPages} — ${percent}% Complete`;
+
       showSuccess("Progress reset");
     } catch (err) {
       showError("Failed to reset");
@@ -428,6 +496,7 @@ function initEditHandler() {
     }
   });
 }
+
 
 
 //Helper function to get CSRF token

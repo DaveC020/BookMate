@@ -147,6 +147,12 @@ export function addBookToUserList(payload) {
   const userBooksGrid = document.getElementById("user-books");
   if (!userBooksGrid) return;
 
+    // REMOVE EMPTY STATE MESSAGE IF IT EXISTS
+  const emptyMessage = userBooksGrid.querySelector("p");
+  if (emptyMessage) {
+    emptyMessage.remove();
+  }
+
   const existing = userBooksGrid.querySelector(`[data-olid="${payload.olid}"]`);
   if (existing) return;
 
@@ -159,31 +165,64 @@ export function addBookToUserList(payload) {
   newCard.setAttribute("data-page", payload.current_page || 0);
   newCard.setAttribute("data-pages", payload.pages || 0);
 
-  newCard.innerHTML = `
-    <a href="/book/${payload.olid}" class="book-card-link">
-      <img src="${payload.cover_url || ""}" alt="${payload.title} cover" class="book-cover">
-      <p class="book-title">${payload.title}</p>
-      <p class="book-author">${payload.author || "Unknown"}</p>
-    </a>
+newCard.innerHTML = `
+<a href="/book/${payload.olid}" class="book-card-link">
+  <img src="${payload.cover_url || ""}" alt="${payload.title} cover" class="book-cover">
+  <p class="book-title">${payload.title}</p>
+  <p class="book-author">${payload.author || "Unknown"}</p>
+</a>
 
-    <div class="book-actions">
-      <button class="favorite-btn" data-olid="${payload.olid}">
-        <span class="star-icon">☆</span>
-      </button>
-
-      <button class="edit-btn"
-        data-olid="${payload.olid}"
-        data-page="${payload.current_page || 0}"
-        data-pages="${payload.pages || 0}">
-        Edit
-      </button>
-
-      <button class="remove-btn" data-olid="${payload.olid}">❌ Remove</button>
+<!-- ✅ PROGRESS BAR (THIS WAS MISSING) -->
+<div class="reading-progress-container">
+  <div class="progress-info">
+    <span class="progress-text" data-progress-text>
+      Page ${payload.current_page || 0} of ${payload.pages || 0}
+    </span>
+    <span class="progress-percentage">0%</span>
+  </div>
+  <div class="progress-bar-wrapper">
+    <div class="progress-bar-bg">
+      <div 
+        class="progress-bar-fill" 
+        data-progress-bar 
+        data-current="${payload.current_page || 0}" 
+        data-total="${payload.pages || 0}">
+      </div>
     </div>
-  `;
+  </div>
+</div>
 
+<div class="book-actions">
+  <button class="favorite-btn" data-olid="${payload.olid}">
+    <span class="star-icon">☆</button>
+  </button>
+
+  <!-- ✅ KEEP edit-btn EXACTLY AS YOU SAID -->
+  <button 
+    class="edit-btn" 
+    data-olid="${payload.olid}" 
+    data-page="${payload.current_page || 0}" 
+    data-pages="${payload.pages || 0}">
+    📝 Progress
+  </button>
+
+  <button class="remove-btn" data-olid="${payload.olid}">
+    ❌ Remove
+  </button>
+</div>
+`;
 
   userBooksGrid.appendChild(newCard);
+
+  // ✅ Initialize progress bar for newly added card
+const newBar = newCard.querySelector("[data-progress-bar]");
+if (newBar) {
+  const current = Number(newBar.dataset.current) || 0;
+  const total = Number(newBar.dataset.total) || 0;
+  const percent = total > 0 ? Math.round((current / total) * 100) : 0;
+  newBar.style.width = `${percent}%`;
+}
+
 
   // NO local edit click handler here — rely on delegated handler in dashboard.js
 }

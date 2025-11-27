@@ -967,3 +967,21 @@ def get_purchase_history(request):
     response = JsonResponse({"success": True, "purchases": purchase_list})
     response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
     return response
+
+
+# book
+# views.py
+from django.http import JsonResponse
+from time import time
+
+
+# loads book but always the newest version of book
+def get_mock_book(request):
+    return JsonResponse({
+        "title": "The Chronicles of Random Thought",
+        "pdf_url": "https://krigeshohndypdhbvijn.supabase.co/storage/v1/object/public/books/mock_book_400_pages.pdf?v=" + str(int(time()))
+    })
+
+
+def reader_view(request):
+    return render(request, "reader.html")

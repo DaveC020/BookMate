@@ -1,0 +1,178 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Book Reader</title>
+
+<style>
+  body {
+    margin: 0;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    background: linear-gradient(to bottom, #E5D4B8, #D4B89C);
+    color: #3B2B1C;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+
+  /* Subtle paper texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 2px,
+      rgba(139, 90, 43, 0.03) 2px,
+      rgba(139, 90, 43, 0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .reader-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    background: linear-gradient(135deg, #F5EFE6 0%, #E8DCC8 100%);
+    border-bottom: 3px solid #C6A34F;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    position: relative;
+    z-index: 2;
+  }
+
+  .reader-title {
+    font-size: 18px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #C6A34F 0%, #A88939 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 0.5px;
+  }
+
+  .back-btn {
+    background: linear-gradient(135deg, #C6A34F 0%, #A88939 100%);
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.25s;
+    box-shadow: 0 4px 12px rgba(198,163,79,0.4);
+  }
+
+  .back-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(198,163,79,0.6);
+  }
+
+  .reader-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 24px;
+    z-index: 1;
+  }
+
+  canvas {
+    background: #fffdf8;
+    border-radius: 14px;
+    box-shadow:
+      0 20px 40px rgba(0,0,0,0.35),
+      inset 0 0 0 6px rgba(139,90,43,0.15);
+
+    /* ✅ THIS CONTROLS THE PERFECT BOOK SIZE */
+    width: auto;
+    height: auto;
+    max-width: 650px;     /* smaller, book-like width */
+    max-height: 80vh;    /* prevents vertical overflow */
+  }
+
+  .controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 18px;
+    padding: 18px;
+    background: linear-gradient(135deg, #F5EFE6 0%, #E8DCC8 100%);
+    border-top: 3px solid #C6A34F;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+    z-index: 2;
+  }
+
+  .controls button {
+    background: linear-gradient(135deg, #C6A34F 0%, #A88939 100%);
+    border: none;
+    color: white;
+    padding: 12px 22px;
+    border-radius: 24px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.25s;
+    box-shadow: 0 4px 14px rgba(198,163,79,0.35);
+  }
+
+  .controls button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 22px rgba(198,163,79,0.55);
+  }
+
+  #page-number {
+    font-size: 14px;
+    font-weight: 700;
+    color: #8B5A2B;
+    min-width: 120px;
+    text-align: center;
+    background: rgba(198,163,79,0.15);
+    padding: 6px 14px;
+    border-radius: 16px;
+    border: 1px solid rgba(198,163,79,0.3);
+  }
+
+  #chapterSelect {
+  padding: 10px 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(198,163,79,0.5);
+  background: linear-gradient(135deg, #F5EFE6, #E8DCC8);
+  color: #3B2B1C;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+</style>
+
+</head>
+
+<body>
+
+  <!-- ✅ TOP BAR -->
+  <div class="reader-header">
+    <button onclick="window.history.back()" class="back-btn">← Back to Preview</button>
+    <select id="chapterSelect"></select>
+    <div class="reader-title">The Chronicles of Random Thought</div>
+  </div>
+
+  <!-- ✅ PDF VIEW -->
+  <div class="reader-container">
+    <canvas id="pdf-viewer" data-book-id="{{ request.GET.olid }}"></canvas>
+  </div>
+
+  <!-- ✅ CONTROLS -->
+  <div class="controls">
+    <button onclick="prevPage()">Previous</button>
+    <span id="page-number">Page 1</span>
+    <button onclick="nextPage()">Next</button>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="{% static 'js/reader.js' %}"></script>
+
+</body>
+</html>
